@@ -1,0 +1,86 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "orange",
+      "category": "food",
+      "image": "./images/orange.jpeg",
+      "price": 10,
+      "uom": "kg"
+    },
+    {
+      "id": 2,
+      "name": "mobile",
+      "category": "electronics",
+      "image": "./images/phone.jpeg",
+      "price": 1000,
+      "uom": "each"
+    },
+    {
+      "id": 3,
+      "name": "table",
+      "category": "furniture",
+      "image": "./images/table.jpeg",
+      "price": 2000,
+      "uom": "each"
+    }
+  ],
+  "categories": ["food", "electronics", "furniture"],
+  "uoms": [
+    {
+      "name": "g",
+      "base": "kg",
+      "convFactor": 1000
+    },
+    {
+      "name": "kg",
+      "base": "kg",
+      "convFactor": 1
+    },
+    {
+      "name": "each",
+      "base": "each",
+      "convFactor": 1
+    },
+    {
+      "name": "dozen",
+      "base": "each",
+      "convFactor": 0.0833333333333333333333
+    }
+  ],
+  "carts": [
+    {
+      "id": 1,
+      "cart": [
+        {
+          "name": "orange",
+          "qty": 10,
+          "uom": "kg",
+          "tax": 1,
+          "discount": 2
+        }
+      ],
+      "desc": "ahmad's cart"
+    },
+    {
+      "id": 2,
+      "cart": [
+        {
+          "name": "orange",
+          "qty": 1,
+          "uom": "kg",
+          "tax": 1,
+          "discount": 2
+        },
+        {
+          "name": "mobile",
+          "qty": 1,
+          "uom": "each",
+          "tax": 10,
+          "discount": 20
+        }
+      ],
+      "desc": "yahya's cart"
+    }
+  ]
+}
