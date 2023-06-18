@@ -3,7 +3,7 @@
     {
       "id": 1,
       "name": "orange",
-      "category": "food",
+      "category": "Food",
       "image": "https://freshwaysupermarkets.weeblysite.com/uploads/1/3/2/0/132031192/s218992050954678001_p3_i1_w650.jpeg?width=1200&optimize=medium",
       "price": 10,
       "uom": {
@@ -15,7 +15,7 @@
     {
       "id": 2,
       "name": "mobile",
-      "category": "electronics",
+      "category": "Electronics",
       "image": "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/refurb-iphone-12-pro-gold-2020?wid=1000&hei=1000&fmt=jpeg&qlt=95&.v=1635202844000",
       "price": 1000,
       "uom": {
@@ -27,7 +27,7 @@
     {
       "id": 3,
       "name": "table",
-      "category": "furniture",
+      "category": "Furniture",
       "image": "https://www.ikea.com/us/en/images/products/ekedalen-extendable-table-brown__0736962_pe740826_s5.jpg?f=xl",
       "price": 2000,
       "uom": {
@@ -37,7 +37,24 @@
       }
     }
   ],
-  "categories": ["food", "electronics", "furniture"],
+  "categories": [
+    {
+      "id": 1,
+      "category": "All"
+    },
+    {
+      "id": 2,
+      "category": "Food"
+    },
+    {
+      "id": 3,
+      "category": "Electronics"
+    },
+    {
+      "id": 4,
+      "category": "Furniture"
+    }
+  ],
   "uoms": [
     {
       "name": "g",
@@ -57,7 +74,7 @@
     {
       "name": "dozen",
       "base": "each",
-      "convFactor": 0.0833333333333333333333
+      "convFactor": 0.08333333333333333
     }
   ],
   "carts": [

@@ -4,10 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        'lightBlack': '#121212',
-        'medBlack': '#111315',
-        'lightGray': '#2d2d2d'
-      }
+        lightBlack: "#121212",
+        medBlack: "#111315",
+        lightGray: "#2d2d2d",
+      },
+      fontFamily: {
+        roboto: ["Roboto", "sans-serif"],
+      },
     },
   },
   plugins: [],

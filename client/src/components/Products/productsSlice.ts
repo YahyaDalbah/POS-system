@@ -4,7 +4,7 @@ import { RootState } from "../../store/store";
 interface UOM {
   name: string;
   base: string;
-  convFactor: number
+  convFactor: number;
 }
 
 export interface ProductType {
@@ -20,12 +20,14 @@ type InitialState = {
   loading: boolean;
   products: ProductType[];
   error: string | undefined;
+  adding: boolean
 };
 
 const initialState: InitialState = {
   loading: false,
   products: [],
   error: "",
+  adding: false
 };
 
 export const fetchProducts = createAsyncThunk("products/fetch", async () => {
@@ -33,6 +35,18 @@ export const fetchProducts = createAsyncThunk("products/fetch", async () => {
   const data = await res.json();
   return data;
 });
+
+export const filterByCategory = createAsyncThunk(
+  "products/filter",
+  async (category: string) => {
+    const res =
+      category != "All"
+        ? await fetch(`http://localhost:3000/products?category=${category}`)
+        : await fetch(`http://localhost:3000/products`);
+    const data = res.json();
+    return data;
+  }
+);
 
 export const addProduct = createAsyncThunk(
   "products/add",
@@ -51,7 +65,7 @@ export const addProduct = createAsyncThunk(
         uom,
       }),
     });
-    const data = res.json();
+    const data = await res.json();
     return data;
   }
 );
@@ -59,7 +73,11 @@ export const addProduct = createAsyncThunk(
 const productsSlice = createSlice({
   name: "products",
   initialState,
-  reducers: {},
+  reducers: {
+    startAdding: state => {
+      state.adding = !state.adding
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchProducts.pending, (state) => {
       state.loading = true;
@@ -75,11 +93,24 @@ const productsSlice = createSlice({
       state.error = action.error.message;
     });
     builder.addCase(addProduct.fulfilled, (state, action) => {
-      state.products.push(action.payload)
-    })
+      state.products.push(action.payload);
+    });
+    builder.addCase(filterByCategory.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(filterByCategory.fulfilled, (state, action) => {
+      state.loading = false;
+      state.products = action.payload;
+      state.error = "";
+    });
+    builder.addCase(filterByCategory.rejected, (state, action) => {
+      state.loading = false;
+      state.products = [];
+      state.error = action.error.message;
+    });
   },
 });
 
-export const selectProducts = (state: RootState) => state.products
+export const selectProducts = (state: RootState) => state.products;
 
 export default productsSlice.reducer;

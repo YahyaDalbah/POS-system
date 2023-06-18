@@ -1,7 +1,6 @@
 import React from "react";
 import { ProductType, selectProducts } from "./productsSlice";
-import { useAppSelector } from "../../store/hooks";
-import Loading from "./Loading";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 export default function Product({
   id,
@@ -11,14 +10,9 @@ export default function Product({
   uom,
   image,
 }: ProductType) {
-
   const products = useAppSelector(selectProducts);
+  const dispatch = useAppDispatch();
 
-  if(products.loading){
-    return (
-      <Loading />
-    )
-  }
   return (
     <div className="flex flex-col text-black">
       <div className="flex justify-center">

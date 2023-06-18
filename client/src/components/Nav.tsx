@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Nav() {
@@ -6,13 +6,13 @@ export default function Nav() {
 
   const links = [
     {
+      text: "menu",
+      to: "/",
+    },
+    {
       text: "products",
       to: "/products",
     },
-    {
-      text: "menu",
-      to: "/"
-    }
   ];
 
   const handleLinkClick = (i: number) => {
@@ -28,6 +28,7 @@ export default function Nav() {
         {/* <Link to={"/"}>pos page</Link> */}
         {links.map((link, i) => (
           <div
+            key={i}
             className={`${
               activeLink === i ? "bg-lightGray text-white" : ""
             } mx-3 p-4 rounded-xl font-normal`}
@@ -37,7 +38,6 @@ export default function Nav() {
             </Link>
           </div>
         ))}
-        {/* <Link to={"/categories"}>categories</Link> */}
         {/* <Link to={"/uoms"}>units of measure</Link> */}
       </div>
     </nav>
