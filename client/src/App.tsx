@@ -5,7 +5,9 @@ import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { fetchProducts, selectProducts } from "./components/Products/productsSlice";
 import { fetchCategories, selectCategories } from "./components/Categories/categoriesSlice";
 import ProductsPage from "./components/Products/ProductsPage";
-import AddForm from "./components/Products/AddForm";
+import AddCategoryForm from "./components/Categories/AddCategoryForm";
+import AddProductForm from "./components/Products/AddProductForm";
+
 
 function App() {
   const dispatch = useAppDispatch()
@@ -21,9 +23,10 @@ function App() {
     <main className=" grid grid-cols-5 bg-medBlack text-gray-300 w-screen h-screen">
       <Nav />
       <Routes>
-        <Route path="/products" element={<ProductsPage />}/>
+        <Route path="/products" element={<ProductsPage />} />
       </Routes>
-      {(products.adding || categories.adding) && <AddForm />}
+      {categories.adding && <AddCategoryForm />}
+      {products.adding && <AddProductForm />}
     </main>
   );
 }

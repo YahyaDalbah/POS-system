@@ -3,8 +3,9 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useAppDispatch } from "../../store/hooks";
 import { addCategory, startAdding } from "../Categories/categoriesSlice";
+import TextInput from "../formInputs/TextInput";
 
-export default function AddForm() {
+export default function AddProductForm() {
   const dispatch = useAppDispatch();
 
   return (
@@ -16,7 +17,7 @@ export default function AddForm() {
         })}
         onSubmit={(values) => {
           dispatch(addCategory(values));
-          dispatch(startAdding())
+          dispatch(startAdding());
         }}
       >
         <Form className="flex flex-col">
@@ -24,14 +25,7 @@ export default function AddForm() {
             Add a Category
           </h1>
           <div className="flex flex-col mx-2">
-            <label htmlFor="category">name</label>
-            <Field
-              className=" outline-none border-2 pl-1 bg-medBlack"
-              type="text"
-              name="category"
-              id="category"
-            />
-            <ErrorMessage name="category" />
+            <TextInput type="text" label="Category name" name="category" id="category" />
           </div>
           <button
             type="submit"

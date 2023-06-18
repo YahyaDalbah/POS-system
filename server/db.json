@@ -1,18 +1,6 @@
 {
   "products": [
     {
-      "id": 1,
-      "name": "orange",
-      "category": "Food",
-      "image": "https://freshwaysupermarkets.weeblysite.com/uploads/1/3/2/0/132031192/s218992050954678001_p3_i1_w650.jpeg?width=1200&optimize=medium",
-      "price": 10,
-      "uom": {
-        "name": "kg",
-        "base": "kg",
-        "convFactor": 1
-      }
-    },
-    {
       "id": 2,
       "name": "mobile",
       "category": "Electronics",
@@ -43,10 +31,6 @@
       "category": "All"
     },
     {
-      "id": 2,
-      "category": "Food"
-    },
-    {
       "id": 3,
       "category": "Electronics"
     },
@@ -57,21 +41,25 @@
   ],
   "uoms": [
     {
+      "id": 1,
       "name": "g",
       "base": "kg",
       "convFactor": 1000
     },
     {
+      "id": 2,
       "name": "kg",
       "base": "kg",
       "convFactor": 1
     },
     {
+      "id": 3,
       "name": "each",
       "base": "each",
       "convFactor": 1
     },
     {
+      "id": 4,
       "name": "dozen",
       "base": "each",
       "convFactor": 0.08333333333333333

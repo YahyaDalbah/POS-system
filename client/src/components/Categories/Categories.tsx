@@ -2,24 +2,25 @@ import { useState } from "react";
 import Category from "./Category";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectCategories, startAdding } from "./categoriesSlice";
-
+import { selectProducts } from "../Products/productsSlice";
 
 export default function Categories() {
   const categories = useAppSelector(selectCategories);
+  const products = useAppSelector(selectProducts);
   const dispatch = useAppDispatch();
-  const [activeLink, setActiveLink] = useState(0);
+  const [activeLink, setActiveLink] = useState(1);
 
   function handleClick() {
-    dispatch(startAdding());
+    if (!products.adding) dispatch(startAdding());
   }
-  const displayedCategories = categories.categories.map((category, i) => {
+  const displayedCategories = categories.categories.map((category) => {
     return (
       <Category
-        key={i}
+        key={category.id}
         activeLink={activeLink}
         category={category.category}
         setActiveLink={setActiveLink}
-        i={i}
+        i={category.id}
       />
     );
   });

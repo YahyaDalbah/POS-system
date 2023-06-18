@@ -8,7 +8,7 @@ interface UOM {
 }
 
 export interface ProductType {
-  id: number;
+  id?: number;
   name: string;
   category: string;
   image: string;
@@ -20,14 +20,14 @@ type InitialState = {
   loading: boolean;
   products: ProductType[];
   error: string | undefined;
-  adding: boolean
+  adding: boolean;
 };
 
 const initialState: InitialState = {
   loading: false,
   products: [],
   error: "",
-  adding: false
+  adding: false,
 };
 
 export const fetchProducts = createAsyncThunk("products/fetch", async () => {
@@ -43,7 +43,7 @@ export const filterByCategory = createAsyncThunk(
       category != "All"
         ? await fetch(`http://localhost:3000/products?category=${category}`)
         : await fetch(`http://localhost:3000/products`);
-    const data = res.json();
+    const data = await res.json();
     return data;
   }
 );
@@ -74,8 +74,13 @@ const productsSlice = createSlice({
   name: "products",
   initialState,
   reducers: {
-    startAdding: state => {
-      state.adding = !state.adding
+    startAdding: (state) => {
+      state.adding = !state.adding;
+    },
+    deleteProductsByCategory: (state,action) => {
+      state.products = state.products.filter(product => {
+        product.id != action.payload.id
+      })
     }
   },
   extraReducers: (builder) => {
@@ -114,3 +119,5 @@ const productsSlice = createSlice({
 export const selectProducts = (state: RootState) => state.products;
 
 export default productsSlice.reducer;
+
+export const { startAdding,deleteProductsByCategory } = productsSlice.actions;

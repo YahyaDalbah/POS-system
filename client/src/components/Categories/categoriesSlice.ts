@@ -2,18 +2,19 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../../store/store";
 type Category = {
   category: string;
+  id?: number;
 };
 type CategoriesType = Category[];
 
 type InitialState = {
   categories: CategoriesType;
   error: string | undefined;
-  adding: boolean
+  adding: boolean;
 };
 const initialState: InitialState = {
   categories: [],
   error: "",
-  adding: false
+  adding: false,
 };
 
 export const fetchCategories = createAsyncThunk(
@@ -25,16 +26,37 @@ export const fetchCategories = createAsyncThunk(
   }
 );
 
+export const deleteCategory = createAsyncThunk(
+  "categories/delete",
+  async ({ category, id }: Category) => {
+    
+    
+    const productsRes = await fetch(
+      `http://localhost:3000/products?category=${category}`
+    );
+    const productsData = await productsRes.json();
+    productsData.forEach(async (product: any) => {
+      await fetch(`http://localhost:3000/products/${product.id}`, {
+        method: "DELETE",
+      });
+    });
+    await fetch(`http://localhost:3000/categories/${id}`,{
+      method:"DELETE"
+    });
+    return id
+  }
+);
+
 export const addCategory = createAsyncThunk(
   "categories/add",
-  async ({category}: Category) => {
+  async ({ category }: Category) => {
     const res = await fetch("http://localhost:3000/categories", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        category
+        category,
       }),
     });
     const data = await res.json();
@@ -42,14 +64,13 @@ export const addCategory = createAsyncThunk(
   }
 );
 
-
 const categoriesSlice = createSlice({
   name: "categories",
   initialState,
   reducers: {
     startAdding: (state) => {
-      state.adding = !state.adding
-    }
+      state.adding = !state.adding;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchCategories.fulfilled, (state, action) => {
@@ -64,11 +85,14 @@ const categoriesSlice = createSlice({
       state.categories.push(action.payload);
     });
     builder.addCase(addCategory.rejected, (state, action) => {
-      console.log(action.error.message)
+      console.log(action.error.message);
     });
+    builder.addCase(deleteCategory.fulfilled, (state,action) => {
+      state.categories = state.categories.filter(category => category.id != action.payload)
+    })
   },
 });
 
 export const selectCategories = (state: RootState) => state.categories;
 export default categoriesSlice.reducer;
-export const {startAdding} = categoriesSlice.actions
+export const { startAdding } = categoriesSlice.actions;
