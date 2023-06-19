@@ -7,6 +7,8 @@ import { fetchCategories, selectCategories } from "./components/Categories/categ
 import ProductsPage from "./components/Products/ProductsPage";
 import AddCategoryForm from "./components/Categories/AddCategoryForm";
 import AddProductForm from "./components/Products/AddProductForm";
+import UOMs from "./components/UOMs/UOMsPage";
+import { fetchUOMs } from "./components/UOMs/UOMsSlice";
 
 
 function App() {
@@ -17,6 +19,7 @@ function App() {
   useEffect(() => {
     dispatch(fetchProducts());
     dispatch(fetchCategories())
+    dispatch(fetchUOMs())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
@@ -24,9 +27,9 @@ function App() {
       <Nav />
       <Routes>
         <Route path="/products" element={<ProductsPage />} />
+        <Route path="/uoms" element={<UOMs />} />
       </Routes>
-      {categories.adding && <AddCategoryForm />}
-      {products.adding && <AddProductForm />}
+      
     </main>
   );
 }

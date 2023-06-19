@@ -1,6 +1,9 @@
 import React from "react";
 import { useAppDispatch } from "../../store/hooks";
-import { deleteProductsByCategory, filterByCategory } from "../Products/productsSlice";
+import {
+  deleteProductsByCategory,
+  filterByCategory,
+} from "../Products/productsSlice";
 import Swal from "sweetalert2";
 import { deleteCategory } from "./categoriesSlice";
 interface cate {
@@ -25,6 +28,7 @@ export default function Category({
   }
   function handleDelete(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();
+
     Swal.fire({
       title: "Are you sure?",
       text: "You will delete the category and all related products!",
@@ -35,8 +39,8 @@ export default function Category({
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        dispatch(deleteCategory({category,id:i})) 
-        dispatch(deleteProductsByCategory({i})) 
+        dispatch(deleteCategory({ category, id: i }));
+        dispatch(deleteProductsByCategory(category));
       }
     });
   }
@@ -50,12 +54,14 @@ export default function Category({
         } flex  focus:outline-none focus:ring-1 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2`}
         onClick={handleClick}
       >
-        <button
-          className="-ml-1 mr-3 bg-gray-600 hover:bg-red-600 px-1.5 text-white rounded-full"
-          onClick={handleDelete}
-        >
-          x
-        </button>
+        {category != "All" && (
+          <button
+            className="-ml-1 mr-3 bg-gray-600 hover:bg-red-600 px-1.5 text-white rounded-full"
+            onClick={handleDelete}
+          >
+            x
+          </button>
+        )}
         {category}
       </button>
     </div>

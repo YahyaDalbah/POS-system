@@ -4,6 +4,8 @@ import Products from "./Products";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectProducts, startAdding } from "./productsSlice";
 import { selectCategories } from "../Categories/categoriesSlice";
+import AddCategoryForm from "../Categories/AddCategoryForm";
+import AddProductForm from "./AddProductForm";
 
 export default function ProductsPage() {
   const products = useAppSelector(selectProducts);
@@ -27,24 +29,25 @@ export default function ProductsPage() {
   }
   //col-span-3
   return (
-    <div
-      className={`bg-white col-span-${
-        products.adding || categories.adding ? 3 : 4
-      }`}
-    >
-      <div className="flex justify-center items-center py-10">
-        <button
-          onClick={handleClick}
-          className="text-gray-900 bg-white border border-gray-800 focus:outline-none hover:bg-gray-100 focus:ring-1 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2"
-        >
-          Add a product
-        </button>
-        <select name="" id="">
-          <option value=""></option>
-        </select>
+    <div className="main-page">
+      <div
+        className={`bg-white col-span-${
+          products.adding || categories.adding ? 3 : 4
+        }`}
+      >
+        <div className="flex justify-center items-center py-10">
+          <button
+            onClick={handleClick}
+            className="text-gray-900 bg-white border border-gray-800 focus:outline-none hover:bg-gray-100 focus:ring-1 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2"
+          >
+            Add a product
+          </button>
+        </div>
+        <Categories />
+        <Products />
       </div>
-      <Categories />
-      <Products />
+      {categories.adding && <AddCategoryForm />}
+      {products.adding && <AddProductForm />}
     </div>
   );
 }

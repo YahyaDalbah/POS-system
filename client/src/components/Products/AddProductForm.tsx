@@ -6,6 +6,7 @@ import { addProduct, startAdding } from "./productsSlice";
 import TextInput from "../formInputs/TextInput";
 import SelectInput from "../formInputs/SelectInput";
 import { selectCategories } from "../Categories/categoriesSlice";
+import Product from './Product';
 
 export default function AddProductForm() {
   const dispatch = useAppDispatch();
@@ -36,9 +37,17 @@ export default function AddProductForm() {
         }}
       >
         <Form className="flex flex-col">
-          <h1 className="text-xl bg-lightGray p-5 py-10 mb-10">
-            Add a product
-          </h1>
+          <div className="form-title">
+            <h1 className="py-10 ">Add a Product</h1>
+            <button
+              type="button"
+              onClick={() => {
+                dispatch(startAdding());
+              }}
+            >
+              X
+            </button>
+          </div>
           <div className="flex flex-col mx-2">
             <TextInput
               type="text"

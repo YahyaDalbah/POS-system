@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../../store/store";
 
-interface UOM {
+export interface UOM {
+  id?: number
+  type: string;
   name: string;
   base: string;
   convFactor: number;
@@ -77,11 +79,12 @@ const productsSlice = createSlice({
     startAdding: (state) => {
       state.adding = !state.adding;
     },
-    deleteProductsByCategory: (state,action) => {
-      state.products = state.products.filter(product => {
-        product.id != action.payload.id
-      })
-    }
+    deleteProductsByCategory: (state, action) => {
+      const pro = state.products.filter((product) => {
+        return product.category != action.payload;
+      });
+      state.products = pro;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchProducts.pending, (state) => {
@@ -120,4 +123,4 @@ export const selectProducts = (state: RootState) => state.products;
 
 export default productsSlice.reducer;
 
-export const { startAdding,deleteProductsByCategory } = productsSlice.actions;
+export const { startAdding, deleteProductsByCategory } = productsSlice.actions;

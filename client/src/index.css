@@ -4,6 +4,16 @@
 @tailwind components;
 @tailwind utilities;
 
+
+.main-page{
+  @apply col-span-4 grid grid-cols-4
+}
+
+.form-title{
+  @apply mb-10 flex justify-between pl-5 pr-10 text-xl bg-lightGray
+}
+
+
 ::-webkit-scrollbar {
     height: 7px;
 }

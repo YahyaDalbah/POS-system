@@ -6,13 +6,17 @@ export default function Nav() {
 
   const links = [
     {
-      text: "menu",
+      text: "Menu",
       to: "/",
     },
     {
-      text: "products",
+      text: "Products",
       to: "/products",
     },
+    {
+      text: "Units of measure",
+      to: "/uoms"
+    }
   ];
 
   const handleLinkClick = (i: number) => {

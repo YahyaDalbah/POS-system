@@ -11,55 +11,43 @@
         "base": "each",
         "convFactor": 1
       }
-    },
-    {
-      "id": 3,
-      "name": "table",
-      "category": "Furniture",
-      "image": "https://www.ikea.com/us/en/images/products/ekedalen-extendable-table-brown__0736962_pe740826_s5.jpg?f=xl",
-      "price": 2000,
-      "uom": {
-        "name": "each",
-        "base": "each",
-        "convFactor": 1
-      }
     }
   ],
   "categories": [
     {
       "id": 1,
-      "category": "All"
+      "category":"All"
     },
     {
       "id": 3,
       "category": "Electronics"
-    },
-    {
-      "id": 4,
-      "category": "Furniture"
     }
   ],
   "uoms": [
     {
       "id": 1,
+      "type": "Weight",
       "name": "g",
       "base": "kg",
       "convFactor": 1000
     },
     {
       "id": 2,
+      "type": "Weight",
       "name": "kg",
       "base": "kg",
       "convFactor": 1
     },
     {
       "id": 3,
+      "type": "Individuals",
       "name": "each",
       "base": "each",
       "convFactor": 1
     },
     {
       "id": 4,
+      "type": "Individuals",
       "name": "dozen",
       "base": "each",
       "convFactor": 0.08333333333333333

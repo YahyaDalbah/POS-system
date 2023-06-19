@@ -90,6 +90,9 @@ const categoriesSlice = createSlice({
     builder.addCase(deleteCategory.fulfilled, (state,action) => {
       state.categories = state.categories.filter(category => category.id != action.payload)
     })
+    builder.addCase(deleteCategory.rejected, (state, action) => {
+      console.log(action.error.message)
+    })
   },
 });
 

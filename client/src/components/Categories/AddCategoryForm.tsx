@@ -21,11 +21,17 @@ export default function AddProductForm() {
         }}
       >
         <Form className="flex flex-col">
-          <h1 className="text-xl bg-lightGray p-5 py-10 mb-10">
-            Add a Category
-          </h1>
+          <div className="form-title">
+            <h1 className="py-10 ">Add a Category</h1>
+            <button type="button" onClick={() => {dispatch(startAdding())}}>X</button>
+          </div>
           <div className="flex flex-col mx-2">
-            <TextInput type="text" label="Category name" name="category" id="category" />
+            <TextInput
+              type="text"
+              label="Category name"
+              name="category"
+              id="category"
+            />
           </div>
           <button
             type="submit"
