@@ -1,43 +1,54 @@
 import React from "react";
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useAppDispatch } from "../../store/hooks";
-import { addCategory, startAdding } from "../Categories/categoriesSlice";
+import { addTypes, startAddingTypes } from "./UOMtypesSlice";
 import TextInput from "../formInputs/TextInput";
-
-export default function AddCategoryForm() {
+import { addUOM } from "./UOMsSlice";
+export default function AddUOMTypeForm() {
   const dispatch = useAppDispatch();
 
   return (
     <div className="text-gray-100">
       <Formik
-        initialValues={{ category: "" }}
+        initialValues={{ type: "", base: "" }}
         validationSchema={Yup.object({
-          category: Yup.string().required("Required"),
+          type: Yup.string()
+            .required("Required")
+            .test("notNumber", "String must not be a number", (value) => {
+              return isNaN(Number(value));
+            }),
+          base: Yup.string()
+            .required("Required")
+            .test("notNumber", "String must not be a number", (value) => {
+              return isNaN(Number(value));
+            }),
         })}
         onSubmit={(values) => {
-          dispatch(addCategory(values));
-          dispatch(startAdding());
+          dispatch(addTypes(values));
+          dispatch(addUOM({...values, name: "", convFactor:1}))
+          dispatch(startAddingTypes());
         }}
       >
         <Form className="flex flex-col">
           <div className="form-title">
-            <h1 className="py-10 ">Add a Category</h1>
+            <h1 className="py-10 ">Add a Type</h1>
             <button
               type="button"
               onClick={() => {
-                dispatch(startAdding());
+                dispatch(startAddingTypes());
               }}
             >
               X
             </button>
           </div>
           <div className="flex flex-col mx-2">
+            <TextInput type="text" label="Type name" name="type" id="type" />
             <TextInput
               type="text"
-              label="Category name"
-              name="category"
-              id="category"
+              label="base unit of measure"
+              name="base"
+              id="base"
             />
           </div>
           <button

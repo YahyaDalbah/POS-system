@@ -7,6 +7,8 @@ interface PropsType {
   type: string
   id:string
   name: string;
+  disabled?: boolean
+  onChange?: any
 }
 
 export default function TextInput({ label,type, ...props }: PropsType) {

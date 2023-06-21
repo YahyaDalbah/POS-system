@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { selectUOMs } from "./UOMsSlice";
+import { selectUOMs, startAdding } from "./UOMsSlice";
 import UOMtype from "./UOMtype";
 import UOMs from "./UOMs";
 import UOM from "./UOM";
+import { addTypes, selectTypes, startAddingTypes } from "./UOMtypesSlice";
+import AddUOMTypeForm from "./addUOMTypeForm";
+import AddUOMForm from "./AddUOMForm";
 
 export default function UOMsPage() {
   const dispatch = useAppDispatch();
   const uoms = useAppSelector(selectUOMs);
+  const types = useAppSelector(selectTypes);
   const [activeLink, setActiveLink] = useState(0);
 
   if (uoms.error) {
@@ -20,33 +24,29 @@ export default function UOMsPage() {
       </div>
     );
   }
-
-  const displayedUOMsTypes = uoms.UOMs.filter((uom, index, array) => {
-    const firstIndex = array.findIndex((item) => item.type === uom.type);
-    return index === firstIndex;
-  }).map((uom) => {
-    return (
-      <UOMtype
-        i={uom.id}
-        type={uom.type}
-        activeLink={activeLink}
-        setActiveLink={setActiveLink}
-      />
-    );
-  });
+  function handleClick() {
+    if (!uoms.adding) dispatch(startAddingTypes());
+  }
+  const displayedUOMsTypes = types.types.map((type) => (
+    <UOMtype
+      type={type.type}
+      i={type.id}
+      activeLink={activeLink}
+      setActiveLink={setActiveLink}
+      base={type.base}
+    />
+  ));
 
   return (
     <div className="main-page">
       <div
-        className={`bg-gray-200 col-span-${uoms.adding ? 3 : 4} text-gray-900 `}
+        className={`bg-gray-200 col-span-${
+          uoms.adding || types.adding ? 3 : 4
+        } text-gray-900 `}
       >
         <div className="font-medium flex p-10 pr-32 bg-white items-center">
           <h1 className="text-xl">Units of measure</h1>
-          <div className="flex justify-center grow">
-            <button className="text-gray-900 bg-white border border-gray-800 focus:outline-none hover:bg-gray-100 focus:ring-1 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2">
-              Add a UOM
-            </button>
-          </div>
+          <div className="flex justify-center grow"></div>
         </div>
         <div className="text-black font-semibold  mt-14">
           <h1 className="text-xl px-10 mb-5">Types</h1>
@@ -57,11 +57,12 @@ export default function UOMsPage() {
                 type={"All"}
                 activeLink={activeLink}
                 setActiveLink={setActiveLink}
+                base={""}
               />
             }
             {displayedUOMsTypes}
             <button
-              // onClick={handleClick}
+              onClick={handleClick}
               className="flex justify-center items-center text-gray-900 bg-white border border-gray-800 focus:outline-none hover:bg-gray-100 focus:ring-1 focus:ring-gray-200 font-medium rounded-full text-md px-5 py-1 mr-2 mb-2"
             >
               <span>Add </span> <span className="text-xl"> +</span>
@@ -70,6 +71,9 @@ export default function UOMsPage() {
           <UOMs />
         </div>
       </div>
+
+      {types.adding && <AddUOMTypeForm />}
+      {uoms.adding && <AddUOMForm />}
     </div>
   );
 }

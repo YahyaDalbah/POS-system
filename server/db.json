@@ -8,6 +8,7 @@
       "price": 1000,
       "uom": {
         "name": "each",
+        "type": "Individuals",
         "base": "each",
         "convFactor": 1
       }
@@ -16,7 +17,7 @@
   "categories": [
     {
       "id": 1,
-      "category":"All"
+      "category": "All"
     },
     {
       "id": 3,
@@ -24,20 +25,6 @@
     }
   ],
   "uoms": [
-    {
-      "id": 1,
-      "type": "Weight",
-      "name": "g",
-      "base": "kg",
-      "convFactor": 1000
-    },
-    {
-      "id": 2,
-      "type": "Weight",
-      "name": "kg",
-      "base": "kg",
-      "convFactor": 1
-    },
     {
       "id": 3,
       "type": "Individuals",
@@ -51,6 +38,37 @@
       "name": "dozen",
       "base": "each",
       "convFactor": 0.08333333333333333
+    },
+    {
+      "type": "test",
+      "base": "test base",
+      "name": "",
+      "convFactor": 1,
+      "id": 5
+    },
+    {
+      "type": "Volume",
+      "base": "L",
+      "name": "ges",
+      "convFactor": 2,
+      "id": 6
+    }
+  ],
+  "types": [
+    {
+      "id": 2,
+      "type": "Individuals",
+      "base": "each"
+    },
+    {
+      "id": 3,
+      "type": "Volume",
+      "base": "L"
+    },
+    {
+      "type": "test",
+      "base": "test base",
+      "id": 4
     }
   ],
   "carts": [

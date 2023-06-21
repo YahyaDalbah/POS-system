@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../../store/store";
 
 export interface UOM {
-  id?: number
+  id?: number;
   type: string;
   name: string;
   base: string;
@@ -80,10 +80,14 @@ const productsSlice = createSlice({
       state.adding = !state.adding;
     },
     deleteProductsByCategory: (state, action) => {
-      const pro = state.products.filter((product) => {
-        return product.category != action.payload;
-      });
-      state.products = pro;
+      state.products = state.products.filter(
+        (product) => product.category != action.payload
+      );
+    },
+    deleteProductsByType: (state, action) => {
+      state.products = state.products.filter(
+        (product) => product.uom.type != action.payload
+      );
     },
   },
   extraReducers: (builder) => {
@@ -123,4 +127,4 @@ export const selectProducts = (state: RootState) => state.products;
 
 export default productsSlice.reducer;
 
-export const { startAdding, deleteProductsByCategory } = productsSlice.actions;
+export const { startAdding, deleteProductsByCategory, deleteProductsByType } = productsSlice.actions;

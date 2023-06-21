@@ -7,6 +7,7 @@ interface PropsType {
   label: string;
   id: string;
   name: string;
+  onChange?: any
 }
 
 export default function SelectInput({children,label,...props}: PropsType) {

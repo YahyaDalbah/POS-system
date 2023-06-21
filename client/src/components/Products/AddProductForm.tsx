@@ -1,5 +1,5 @@
 import React from "react";
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { addProduct, startAdding } from "./productsSlice";
