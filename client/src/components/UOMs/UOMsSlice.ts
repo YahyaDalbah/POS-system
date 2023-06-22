@@ -8,9 +8,9 @@ type InitialState = {
   UOMs: UOM[];
   error?: string;
   updating: {
-    updating: boolean,
-    id?: number
-  }
+    updating: boolean;
+    id?: number;
+  };
 };
 
 const initialState: InitialState = {
@@ -20,7 +20,7 @@ const initialState: InitialState = {
   error: "",
   updating: {
     updating: false,
-  }
+  },
 };
 
 export const fetchUOMs = createAsyncThunk("UOMs/fetch", async () => {
@@ -86,9 +86,9 @@ const UOMsSlice = createSlice({
     startAdding: (state) => {
       state.adding = !state.adding;
     },
-    startUpdating: (state,action) => {
-      state.updating.updating = !state.updating.updating
-      state.updating.id = action.payload
+    startUpdating: (state, action) => {
+      state.updating.updating = !state.updating.updating;
+      state.updating.id = action.payload;
     },
     deleteUOMsByType: (state, action) => {
       const pro = state.UOMs.filter((UOM) => {
@@ -100,6 +100,38 @@ const UOMsSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchUOMs.pending, (state) => {
       state.loading = true;
+    });
+    builder.addCase(addUOM.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(filterUomByType.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(deleteUOM.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(updateUOM.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(addUOM.rejected, (state, action) => {
+      state.loading = false;
+      state.UOMs = [];
+      state.error = action.error.message;
+    });
+    builder.addCase(deleteUOM.rejected, (state, action) => {
+      state.loading = false;
+      state.UOMs = [];
+      state.error = action.error.message;
+    });
+    builder.addCase(updateUOM.rejected, (state, action) => {
+      state.loading = false;
+      state.UOMs = [];
+      state.error = action.error.message;
+    });
+    builder.addCase(filterUomByType.rejected, (state, action) => {
+      state.loading = false;
+      state.UOMs = [];
+      state.error = action.error.message;
     });
     builder.addCase(fetchUOMs.fulfilled, (state, action) => {
       state.loading = false;
@@ -113,25 +145,18 @@ const UOMsSlice = createSlice({
     });
     builder.addCase(addUOM.fulfilled, (state, action) => {
       state.UOMs.push(action.payload);
+      state.loading = false
     });
-    builder.addCase(addUOM.rejected, (state, action) => {
-      console.log(action.error.message);
-    });
-    builder.addCase(filterUomByType.pending, (state) => {
-      state.loading = true;
-    });
+
     builder.addCase(filterUomByType.fulfilled, (state, action) => {
       state.loading = false;
       state.UOMs = action.payload;
       state.error = "";
     });
-    builder.addCase(filterUomByType.rejected, (state, action) => {
-      state.loading = false;
-      state.UOMs = [];
-      state.error = action.error.message;
-    });
+
     builder.addCase(deleteUOM.fulfilled, (state, action) => {
       state.UOMs = state.UOMs.filter((uom) => uom.id != action.payload);
+      state.loading = false
     });
     builder.addCase(updateUOM.fulfilled, (state, action) => {
       state.UOMs = state.UOMs.map((uom) => {
@@ -141,6 +166,7 @@ const UOMsSlice = createSlice({
           return uom;
         }
       });
+      state.loading = false
     });
   },
 });
@@ -149,4 +175,5 @@ export const selectUOMs = (state: RootState) => state.uoms;
 
 export default UOMsSlice.reducer;
 
-export const { deleteUOMsByType, startAdding,startUpdating } = UOMsSlice.actions;
+export const { deleteUOMsByType, startAdding, startUpdating } =
+  UOMsSlice.actions;

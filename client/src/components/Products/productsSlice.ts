@@ -14,7 +14,7 @@ export interface ProductType {
   name: string;
   category: string;
   image: string;
-  price: 10;
+  price: number;
   uom: UOM;
 }
 
@@ -23,6 +23,10 @@ type InitialState = {
   products: ProductType[];
   error: string | undefined;
   adding: boolean;
+  updating: {
+    updating: boolean
+    id?: number
+  }
 };
 
 const initialState: InitialState = {
@@ -30,6 +34,9 @@ const initialState: InitialState = {
   products: [],
   error: "",
   adding: false,
+  updating: {
+    updating: false
+  }
 };
 
 export const fetchProducts = createAsyncThunk("products/fetch", async () => {
@@ -52,20 +59,38 @@ export const filterByCategory = createAsyncThunk(
 
 export const addProduct = createAsyncThunk(
   "products/add",
-  async ({ id, name, category, image, price, uom }: ProductType) => {
+  async (values: ProductType) => {
     const res = await fetch("http://localhost:3000/products", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        id,
-        name,
-        category,
-        image,
-        price,
-        uom,
-      }),
+      body: JSON.stringify(values),
+    });
+    const data = await res.json();
+    return data;
+  }
+);
+
+export const deleteProduct = createAsyncThunk(
+  "products/delete",
+  async (id: number | undefined) => {
+    await fetch(`http://localhost:3000/products/${id}`, {
+      method: "DELETE",
+    });
+    return id;
+  }
+);
+
+export const updateProduct = createAsyncThunk(
+  "products/update",
+  async (values: any) => {
+    const res = await fetch(`http://localhost:3000/products/${values.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
     });
     const data = await res.json();
     return data;
@@ -78,6 +103,10 @@ const productsSlice = createSlice({
   reducers: {
     startAdding: (state) => {
       state.adding = !state.adding;
+    },
+    startUpdating: (state,action) => {
+      state.updating.updating = !state.updating.updating
+      state.updating.id = action.payload
     },
     deleteProductsByCategory: (state, action) => {
       state.products = state.products.filter(
@@ -104,8 +133,16 @@ const productsSlice = createSlice({
       state.products = [];
       state.error = action.error.message;
     });
+    builder.addCase(addProduct.pending, (state, action) => {
+      state.loading = true
+    });
     builder.addCase(addProduct.fulfilled, (state, action) => {
       state.products.push(action.payload);
+      state.loading = false;
+    });
+    builder.addCase(addProduct.rejected, (state, action) => {
+      state.error = action.error.message
+      state.loading = false;
     });
     builder.addCase(filterByCategory.pending, (state) => {
       state.loading = true;
@@ -120,6 +157,36 @@ const productsSlice = createSlice({
       state.products = [];
       state.error = action.error.message;
     });
+    builder.addCase(deleteProduct.pending, (state, action) => {
+      state.loading = true
+    });
+    builder.addCase(deleteProduct.fulfilled, (state, action) => {
+      state.products = state.products.filter(
+        (product) => product.id != action.payload
+      );
+      state.loading = false;
+    });
+    builder.addCase(deleteProduct.rejected, (state, action) => {
+      state.error = action.error.message
+      state.loading = false
+    });
+    builder.addCase(updateProduct.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(updateProduct.rejected, (state, action) => {
+      state.error = action.error.message;
+      state.loading = false;
+    });
+    builder.addCase(updateProduct.fulfilled, (state, action) => {
+      state.products = state.products.map((product) => {
+        if (product.id == action.payload.id) {
+          return action.payload;
+        } else {
+          return product;
+        }
+      });
+      state.loading = false
+    });
   },
 });
 
@@ -127,4 +194,4 @@ export const selectProducts = (state: RootState) => state.products;
 
 export default productsSlice.reducer;
 
-export const { startAdding, deleteProductsByCategory, deleteProductsByType } = productsSlice.actions;
+export const { startAdding, startUpdating, deleteProductsByCategory, deleteProductsByType } = productsSlice.actions;

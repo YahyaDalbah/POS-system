@@ -11,7 +11,7 @@ export default function Categories() {
   const [activeLink, setActiveLink] = useState(1);
 
   function handleClick() {
-    if (!products.adding) dispatch(startAdding());
+    if (!products.adding && !products.updating.updating) dispatch(startAdding());
   }
   const displayedCategories = categories.categories.map((category) => {
     return (
@@ -25,9 +25,9 @@ export default function Categories() {
     );
   });
   return (
-    <div className="text-black font-semibold px-10">
-      <h1 className="text-xl">Categories</h1>
-      <div className="flex pt-8 overflow-x-auto gap-x-2 scroll-p-1">
+    <div className="">
+      <h1 className="text-xl px-10 mb-5">Categories</h1>
+      <div className="flex pt-6 pb-4 overflow-x-auto gap-x-2 scroll-p-1 bg-white pl-10 mx-2 rounded-md ">
         {displayedCategories}
         <button
           onClick={handleClick}

@@ -1,6 +1,7 @@
 import React from "react";
-import { ProductType, selectProducts } from "./productsSlice";
+import { ProductType, deleteProduct, selectProducts, startUpdating } from "./productsSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectCategories } from "../Categories/categoriesSlice";
 
 export default function Product({
   id,
@@ -11,8 +12,15 @@ export default function Product({
   image,
 }: ProductType) {
   const products = useAppSelector(selectProducts);
+  const categories = useAppSelector(selectCategories)
   const dispatch = useAppDispatch();
 
+  function handleDelete() {
+    dispatch(deleteProduct(id));
+  }
+  function handleUpdate() {
+    if (!products.adding && !categories.adding) dispatch(startUpdating(id));
+  }
   return (
     <div className="flex flex-col text-black">
       <div className="flex justify-center">
@@ -26,10 +34,10 @@ export default function Product({
         <p>{category}</p>
       </div>
       <div className="flex justify-evenly mt-3">
-        <button className="delete-button">
+        <button onClick={handleDelete} className="delete-button">
           Delete
         </button>
-        <button className="update-button">
+        <button onClick={handleUpdate} className="update-button">
           Update
         </button>
       </div>

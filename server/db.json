@@ -2,16 +2,31 @@
   "products": [
     {
       "id": 2,
-      "name": "mobile",
+      "name": "iphone 12",
+      "price": 534,
       "category": "Electronics",
-      "image": "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/refurb-iphone-12-pro-gold-2020?wid=1000&hei=1000&fmt=jpeg&qlt=95&.v=1635202844000",
-      "price": 1000,
       "uom": {
-        "name": "each",
+        "id": 6,
         "type": "Individuals",
         "base": "each",
-        "convFactor": 1
-      }
+        "name": "dozen",
+        "convFactor": 12
+      },
+      "image": ""
+    },
+    {
+      "name": "pincel",
+      "price": 12,
+      "category": "furniture",
+      "uom": {
+        "id": 6,
+        "type": "Individuals",
+        "base": "each",
+        "name": "dozen",
+        "convFactor": 12
+      },
+      "image": "",
+      "id": 4
     }
   ],
   "categories": [
@@ -22,36 +37,30 @@
     {
       "id": 3,
       "category": "Electronics"
+    },
+    {
+      "category": "furniture",
+      "id": 4
+    },
+    {
+      "category": "food",
+      "id": 5
     }
   ],
   "uoms": [
     {
-      "id": 3,
+      "id": 1,
       "type": "Individuals",
-      "name": "each",
       "base": "each",
+      "name": "each",
       "convFactor": 1
-    },
-    {
-      "type": "test",
-      "base": "test base",
-      "name": "",
-      "convFactor": 1,
-      "id": 5
     },
     {
       "id": 6,
       "type": "Individuals",
       "base": "each",
-      "name": "yahya dalbah",
+      "name": "dozen",
       "convFactor": 12
-    },
-    {
-      "type": "Volume",
-      "base": "L",
-      "name": "es",
-      "convFactor": 34,
-      "id": 7
     }
   ],
   "types": [
@@ -64,11 +73,6 @@
       "id": 3,
       "type": "Volume",
       "base": "L"
-    },
-    {
-      "type": "test",
-      "base": "test base",
-      "id": 4
     }
   ],
   "carts": [

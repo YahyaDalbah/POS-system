@@ -8,6 +8,7 @@ type CategoriesType = Category[];
 
 type InitialState = {
   categories: CategoriesType;
+  loading: boolean
   error: string | undefined;
   adding: boolean;
 };
@@ -15,6 +16,7 @@ const initialState: InitialState = {
   categories: [],
   error: "",
   adding: false,
+  loading: false
 };
 
 export const fetchCategories = createAsyncThunk(
@@ -81,18 +83,28 @@ const categoriesSlice = createSlice({
       state.categories = [];
       state.error = action.error.message;
     });
+    builder.addCase(addCategory.pending, (state, action) => {
+      state.loading = true
+    });
     builder.addCase(addCategory.fulfilled, (state, action) => {
       state.categories.push(action.payload);
+      state.loading = false;
     });
     builder.addCase(addCategory.rejected, (state, action) => {
-      console.log(action.error.message);
+      state.error = action.error.message;
+      state.loading = false;
+    });
+    builder.addCase(deleteCategory.pending, (state, action) => {
+      state.loading = true
     });
     builder.addCase(deleteCategory.fulfilled, (state,action) => {
       state.categories = state.categories.filter(category => category.id != action.payload)
+      state.loading = false
     })
     builder.addCase(deleteCategory.rejected, (state, action) => {
-      console.log(action.error.message)
-    })
+      state.error = action.error.message;
+      state.loading = false;
+    });
   },
 });
 

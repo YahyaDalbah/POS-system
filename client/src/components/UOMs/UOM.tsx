@@ -2,16 +2,18 @@ import React from "react";
 import { UOM } from "../Products/productsSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { deleteUOM, selectUOMs, startUpdating } from "./UOMsSlice";
+import { selectTypes } from "./UOMtypesSlice";
 
 export default function UOMCard({ id, name, type, base, convFactor }: UOM) {
   const uoms = useAppSelector(selectUOMs);
+  const types = useAppSelector(selectTypes)
   const dispatch = useAppDispatch()
 
   function handleDelete(){
     dispatch(deleteUOM(id))
   }
   function handleUpdate(){
-    dispatch(startUpdating(id))
+    if(!uoms.adding && !types.adding)dispatch(startUpdating(id))
   }
   return (
     <div className="bg-gray-100 rounded-md px-10 py-5">

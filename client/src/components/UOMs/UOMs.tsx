@@ -11,24 +11,7 @@ export default function UOMs() {
   const dispatch = useAppDispatch();
 
   function handleClick() {
-    if (!types.adding) dispatch(startAdding());
-  }
-  if (uoms.loading) {
-    return (
-      <div className="mt-12">
-        <div className="bg-white grid grid-cols-3 mx-2 rounded-md pl-7 py-4 gap-8">
-          <Loading />
-          <Loading />
-          <Loading />
-          <Loading />
-          <Loading />
-          <Loading />
-          <Loading />
-          <Loading />
-          <Loading />
-        </div>
-      </div>
-    );
+    if (!types.adding && !uoms.updating.updating) dispatch(startAdding());
   }
   const displayedUOMs = uoms.UOMs.map((uom) => {
     return <UOM {...uom} />;

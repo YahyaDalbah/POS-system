@@ -1,29 +1,20 @@
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { selectProducts } from "./productsSlice";
+import { selectProducts, startAdding } from "./productsSlice";
 import Product from "./Product";
 import Loading from "./Loading";
+import { selectCategories } from "../Categories/categoriesSlice";
 
 
 export default function Products() {
   const dispatch = useAppDispatch();
   const products = useAppSelector(selectProducts);
-
+  const categories = useAppSelector(selectCategories)
   
-  if (products.loading) {
-    return (
-      <div className="bg-white col-span-4 grid grid-cols-3 auto-rows-min gap-10 p-10">
-        <Loading />
-        <Loading />
-        <Loading />
-        <Loading />
-        <Loading />
-        <Loading />
-        <Loading />
-        <Loading />
-        <Loading />
-      </div>
-    );
+  function handleClick() {
+    if (!categories.adding && !products.updating.updating) {
+      dispatch(startAdding());
+    }
   }
   const displayedProducts = products.products.map((product) => (
     <Product
@@ -37,8 +28,16 @@ export default function Products() {
     />
   ));
   return (
-    <div className="grid grid-cols-3 gap-10 pt-10 px-10">
-      {displayedProducts}
+    <div className="mt-12">
+      <div className="pl-10 mb-5 flex gap-x-10">
+        <h1 className="text-xl">Products</h1>
+        <button onClick={handleClick} className="add-button">
+          Add a product
+        </button>
+      </div>
+      <div className="bg-white grid grid-cols-3 mx-2 pl-2 rounded-md py-6 gap-y-8">
+        {displayedProducts}
+      </div>
     </div>
   );
 }

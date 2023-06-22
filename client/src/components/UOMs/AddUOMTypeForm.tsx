@@ -26,7 +26,6 @@ export default function AddUOMTypeForm() {
         })}
         onSubmit={(values) => {
           dispatch(addTypes(values));
-          dispatch(addUOM({...values, name: "", convFactor:1}))
           dispatch(startAddingTypes());
         }}
       >

@@ -13,7 +13,7 @@ interface PropsType {
 export default function SelectInput({children,label,...props}: PropsType) {
     const [field, meta] = useField(props);
   return (
-    <div>
+    <div className='my-2'>
       <label htmlFor={props.name}>{label}</label>
       <select
         className="outline-none border-2 p-1 bg-medBlack ml-4"

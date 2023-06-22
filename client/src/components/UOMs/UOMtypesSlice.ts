@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../../store/store";
+import { addUOM } from "./UOMsSlice";
 
 interface UOMType {
   id?: number;
@@ -27,8 +28,8 @@ export const fetchTypes = createAsyncThunk("UOMsTypes/fetch", async () => {
   return data;
 });
 
-export const addTypes = createAsyncThunk("UOMsTypes/add", async (type: UOMType) => {
-  const res = await fetch("http://localhost:3000/types", {
+export const addTypes = createAsyncThunk("UOMsTypes/add", async (type: UOMType, {dispatch}) => {
+  const res = await fetch("http://localhost:300/types", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -36,6 +37,7 @@ export const addTypes = createAsyncThunk("UOMsTypes/add", async (type: UOMType) 
     body: JSON.stringify(type),
   });
   const data = await res.json();
+  await dispatch(addUOM({ ...type, name: type.base, convFactor: 1 }));
   return data;
 });
 
@@ -76,22 +78,43 @@ const TypesSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
+    builder.addCase(fetchTypes.pending, (state) => {
+      state.loading = true
+    });
+    builder.addCase(addTypes.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(deleteType.pending, (state) => {
+      state.loading = true;
+    });
     builder.addCase(fetchTypes.fulfilled, (state, action) => {
       state.types = action.payload;
       state.error = "";
+      state.loading = false
     });
     builder.addCase(fetchTypes.rejected, (state, action) => {
       state.types = [];
       state.error = action.error.message;
+      state.loading = false
+    });
+    builder.addCase(addTypes.rejected, (state, action) => {
+      state.types = [];
+      state.error = action.error.message;
+      state.loading = false;
+    });
+    builder.addCase(deleteType.rejected, (state, action) => {
+      state.types = [];
+      state.error = action.error.message;
+      state.loading = false
+      
     });
     builder.addCase(addTypes.fulfilled, (state, action) => {
       state.types.push(action.payload);
-    });
-    builder.addCase(addTypes.rejected, (state, action) => {
-      console.log(action.error.message);
+      state.loading = false
     });
     builder.addCase(deleteType.fulfilled, (state, action) => {
         state.types = state.types.filter(type => type.id != action.payload)
+        state.loading = false
     })
   },
 });
