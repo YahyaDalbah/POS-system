@@ -5,7 +5,7 @@ import UOMtype from "./UOMtype";
 import UOMs from "./UOMs";
 import UOM from "./UOM";
 import { addTypes, selectTypes, startAddingTypes } from "./UOMtypesSlice";
-import AddUOMTypeForm from "./addUOMTypeForm";
+import AddUOMTypeForm from "./AddUOMTypeForm";
 import AddUOMForm from "./AddUOMForm";
 
 export default function UOMsPage() {
@@ -41,7 +41,7 @@ export default function UOMsPage() {
     <div className="main-page">
       <div
         className={`bg-gray-200 col-span-${
-          uoms.adding || types.adding ? 3 : 4
+          uoms.adding || types.adding ||uoms.updating.updating ? 3 : 4
         } text-gray-900 `}
       >
         <div className="font-medium flex p-10 pr-32 bg-white items-center">
@@ -74,6 +74,7 @@ export default function UOMsPage() {
 
       {types.adding && <AddUOMTypeForm />}
       {uoms.adding && <AddUOMForm />}
+      {uoms.updating.updating && <AddUOMForm update={true} id={uoms.updating.id} />}
     </div>
   );
 }

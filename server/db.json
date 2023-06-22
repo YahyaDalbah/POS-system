@@ -33,13 +33,6 @@
       "convFactor": 1
     },
     {
-      "id": 4,
-      "type": "Individuals",
-      "name": "dozen",
-      "base": "each",
-      "convFactor": 0.08333333333333333
-    },
-    {
       "type": "test",
       "base": "test base",
       "name": "",
@@ -47,11 +40,18 @@
       "id": 5
     },
     {
+      "id": 6,
+      "type": "Individuals",
+      "base": "each",
+      "name": "yahya dalbah",
+      "convFactor": 12
+    },
+    {
       "type": "Volume",
       "base": "L",
-      "name": "ges",
-      "convFactor": 2,
-      "id": 6
+      "name": "es",
+      "convFactor": 34,
+      "id": 7
     }
   ],
   "types": [

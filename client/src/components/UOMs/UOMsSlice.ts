@@ -7,6 +7,10 @@ type InitialState = {
   adding: boolean;
   UOMs: UOM[];
   error?: string;
+  updating: {
+    updating: boolean,
+    id?: number
+  }
 };
 
 const initialState: InitialState = {
@@ -14,6 +18,9 @@ const initialState: InitialState = {
   adding: false,
   UOMs: [],
   error: "",
+  updating: {
+    updating: false,
+  }
 };
 
 export const fetchUOMs = createAsyncThunk("UOMs/fetch", async () => {
@@ -46,12 +53,42 @@ export const filterUomByType = createAsyncThunk(
   }
 );
 
+export const deleteUOM = createAsyncThunk(
+  "UOMs/delete",
+  async (id: number | undefined) => {
+    const res = await fetch(`http://localhost:3000/uoms/${id}`, {
+      method: "DELETE",
+    });
+    const data = await res.json();
+    return id;
+  }
+);
+
+export const updateUOM = createAsyncThunk(
+  "UOMs/update",
+  async (values: any) => {
+    const res = await fetch(`http://localhost:3000/uoms/${values.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+    const data = await res.json();
+    return data;
+  }
+);
+
 const UOMsSlice = createSlice({
   name: "UOMs",
   initialState,
   reducers: {
     startAdding: (state) => {
       state.adding = !state.adding;
+    },
+    startUpdating: (state,action) => {
+      state.updating.updating = !state.updating.updating
+      state.updating.id = action.payload
     },
     deleteUOMsByType: (state, action) => {
       const pro = state.UOMs.filter((UOM) => {
@@ -93,6 +130,18 @@ const UOMsSlice = createSlice({
       state.UOMs = [];
       state.error = action.error.message;
     });
+    builder.addCase(deleteUOM.fulfilled, (state, action) => {
+      state.UOMs = state.UOMs.filter((uom) => uom.id != action.payload);
+    });
+    builder.addCase(updateUOM.fulfilled, (state, action) => {
+      state.UOMs = state.UOMs.map((uom) => {
+        if (uom.id == action.payload.id) {
+          return action.payload;
+        } else {
+          return uom;
+        }
+      });
+    });
   },
 });
 
@@ -100,4 +149,4 @@ export const selectUOMs = (state: RootState) => state.uoms;
 
 export default UOMsSlice.reducer;
 
-export const { deleteUOMsByType, startAdding } = UOMsSlice.actions
+export const { deleteUOMsByType, startAdding,startUpdating } = UOMsSlice.actions;

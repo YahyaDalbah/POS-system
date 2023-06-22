@@ -11,8 +11,6 @@ import {
   selectCategories,
 } from "./components/Categories/categoriesSlice";
 import ProductsPage from "./components/Products/ProductsPage";
-import AddCategoryForm from "./components/Categories/AddCategoryForm";
-import AddProductForm from "./components/Products/AddProductForm";
 import UOMs from "./components/UOMs/UOMsPage";
 import { fetchUOMs } from "./components/UOMs/UOMsSlice";
 import { fetchTypes } from "./components/UOMs/UOMtypesSlice";
