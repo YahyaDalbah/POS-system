@@ -6,12 +6,13 @@ import { useAppSelector } from "../../store/hooks";
 import { selectCarts } from "./CartsSlice";
 import AddCartForm from "./AddCartForm";
 import CartDisplay from "./CartDisplay";
+import UpdateCartForm from "./UpdateCartForm";
 
 export default function POSPage() {
   const carts = useAppSelector(selectCarts)
   return (
     <div className="main-page">
-      <div className={`h-full bg-gray-200 text-gray-900 col-span-${carts.adding || carts.showingCart.showing ? 3 : 4} flex flex-col justify-between`}>
+      <div className={`h-full bg-gray-200 text-gray-900 col-span-${carts.adding || carts.showingCart.showing || carts.updating.updating ? 3 : 4} flex flex-col justify-between`}>
         <div>
           <div className="font-medium flex p-10 bg-white items-center">
             <h1 className="text-xl">POS page</h1>
@@ -25,6 +26,7 @@ export default function POSPage() {
       </div>
       {carts.adding && <AddCartForm />}
       {carts.showingCart.showing && <CartDisplay />}
+      {carts.updating.updating && <UpdateCartForm id={carts.updating.id} />}
     </div>
   );
 }

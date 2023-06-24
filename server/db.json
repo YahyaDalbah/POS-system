@@ -86,23 +86,6 @@
   ],
   "carts": [
     {
-      "id": 1,
-      "cartProducts": [
-        {
-          "id": 1,
-          "price": 10,
-          "name": "orange",
-          "qty": 10,
-          "uom": "kg"
-        }
-      ],
-      "tax": 10,
-      "discount": 20,
-      "title": "ahmad's cart",
-      "desc": "ahmad's cart",
-      "total": 100
-    },
-    {
       "id": 2,
       "cartProducts": [
         {
@@ -120,20 +103,10 @@
           "uom": "each"
         }
       ],
-      "tax": 10,
-      "discount": 20,
-      "desc": "yahya's cart desc",
-      "title": "yahya's cart title",
-      "total": 2000
-    },
-    {
-      "title": "test",
-      "desc": "longgggggggggggggggggggggggggggg test description",
-      "tax": 0,
-      "discount": 0,
-      "cartProducts": [],
-      "total": 0,
-      "id": 3
+      "tax": 32,
+      "discount": 54,
+      "desc": "hrd",
+      "title": "y5r"
     }
   ]
 }

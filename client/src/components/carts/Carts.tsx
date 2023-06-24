@@ -11,7 +11,7 @@ export default function Carts() {
   });
 
   function handleClick(){
-    if(!carts.showingCart.showing)dispatch(startAdding());
+    if(!carts.showingCart.showing && !carts.updating.updating)dispatch(startAdding());
   }
   return (
     <div>

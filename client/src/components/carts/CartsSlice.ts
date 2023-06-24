@@ -16,7 +16,6 @@ export interface CartType {
   discount: number;
   title: string;
   desc: string;
-  total: number;
 }
 
 type InitialState = {
@@ -24,10 +23,14 @@ type InitialState = {
   error: string | undefined;
   adding: boolean;
   showingCart: {
-    showing: boolean
-    id?:number
-  }
+    showing: boolean;
+    id?: number;
+  };
   carts: CartType[];
+  updating: {
+    updating: boolean;
+    id?: number;
+  };
 };
 
 const initialState: InitialState = {
@@ -36,6 +39,9 @@ const initialState: InitialState = {
   adding: false,
   showingCart: {
     showing: false
+  },
+  updating:{
+    updating:false
   },
   carts: [],
 };
@@ -61,6 +67,28 @@ export const addCart = createAsyncThunk(
   }
 );
 
+export const checkoutCart = createAsyncThunk("carts/checkout", async (id:any) => {
+  await fetch(`http://localhost:3000/carts/${id}`,{
+    method:"DELETE"
+  });
+  return id
+});
+
+export const updateCart = createAsyncThunk(
+  "carts/update",
+  async (values: any) => {
+    const res = await fetch(`http://localhost:3000/carts/${values.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values)
+    });
+    const data = await res.json()
+    return data;
+  }
+);
+
 const cartsSlice = createSlice({
   name: "carts",
   initialState,
@@ -74,10 +102,14 @@ const cartsSlice = createSlice({
     },
     stopShowing: state => {
       state.showingCart.showing = false
+    },
+    startUpdating: (state,action) => {
+      state.updating.updating = !state.updating.updating
+      state.updating.id = action.payload
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchCarts.pending, (state, action) => {
+    builder.addCase(fetchCarts.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(fetchCarts.rejected, (state, action) => {
@@ -88,7 +120,7 @@ const cartsSlice = createSlice({
       state.carts = action.payload;
       state.loading = false;
     });
-    builder.addCase(addCart.pending, (state, action) => {
+    builder.addCase(addCart.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(addCart.rejected, (state, action) => {
@@ -99,6 +131,34 @@ const cartsSlice = createSlice({
       state.carts.push(action.payload);
       state.loading = false;
     });
+    builder.addCase(checkoutCart.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(checkoutCart.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+    builder.addCase(checkoutCart.fulfilled, (state, action) => {
+      state.loading = false;
+      state.carts = state.carts.filter(cart => cart.id != action.payload)
+    });
+    builder.addCase(updateCart.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(updateCart.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+    builder.addCase(updateCart.fulfilled, (state, action) => {
+      state.loading = false;
+      state.carts = state.carts.map((cart) => {
+        if(cart.id == action.payload.id){
+          return action.payload
+        }else{
+          return cart
+        }
+      });
+    });
   },
 });
 
@@ -106,4 +166,4 @@ export default cartsSlice.reducer;
 
 export const selectCarts = (state: RootState) => state.carts;
 
-export const { startAdding, showCart ,stopShowing} = cartsSlice.actions;
+export const { startUpdating,startAdding, showCart ,stopShowing} = cartsSlice.actions;
