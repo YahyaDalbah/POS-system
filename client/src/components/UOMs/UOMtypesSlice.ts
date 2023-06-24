@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../../store/store";
-import { addUOM } from "./UOMsSlice";
+import { addUOM, updateUOMsByType } from "./UOMsSlice";
+import { updateProductsByTypeOfMeasure } from "../Products/productsSlice";
 
 interface UOMType {
   id?: number;
@@ -13,6 +14,11 @@ type InitialState = {
   types: UOMType[];
   adding: boolean;
   error?: string;
+  updating: {
+    updating: boolean;
+    id?: number;
+    type?: string;
+  };
 };
 
 const initialState: InitialState = {
@@ -20,6 +26,9 @@ const initialState: InitialState = {
   adding: false,
   types: [],
   error: "",
+  updating: {
+    updating: false
+  }
 };
 
 export const fetchTypes = createAsyncThunk("UOMsTypes/fetch", async () => {
@@ -29,7 +38,7 @@ export const fetchTypes = createAsyncThunk("UOMsTypes/fetch", async () => {
 });
 
 export const addTypes = createAsyncThunk("UOMsTypes/add", async (type: UOMType, {dispatch}) => {
-  const res = await fetch("http://localhost:300/types", {
+  const res = await fetch("http://localhost:3000/types", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -67,6 +76,37 @@ export const deleteType = createAsyncThunk(
   }
 );
 
+export const updateType = createAsyncThunk(
+  "UOMsTypes/update",
+  async (values: any, { dispatch, getState }) => {
+    const state: any = getState();
+    const res = await fetch(`http://localhost:3000/types/${values.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+    const data = await res.json();
+    console.log(state.types);
+    dispatch(
+      updateUOMsByType({
+        prevType: state.types.updating.type,
+        currType: values.type,
+        currBase: values.base
+      })
+    );
+    dispatch(
+      updateProductsByTypeOfMeasure({
+        prevType: state.types.updating.type,
+        currType: values.type,
+        currBase: values.base,
+      })
+    );
+    return data;
+  }
+);
+
 
 
 const TypesSlice = createSlice({
@@ -74,12 +114,17 @@ const TypesSlice = createSlice({
   initialState,
   reducers: {
     startAddingTypes: (state) => {
-      state.adding = !state.adding
-    }
+      state.adding = !state.adding;
+    },
+    startUpdatingTypes: (state, action) => {
+      state.updating.updating = !state.updating.updating;
+      state.updating.id = action.payload.id;
+      state.updating.type = action.payload.type;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchTypes.pending, (state) => {
-      state.loading = true
+      state.loading = true;
     });
     builder.addCase(addTypes.pending, (state) => {
       state.loading = true;
@@ -90,12 +135,12 @@ const TypesSlice = createSlice({
     builder.addCase(fetchTypes.fulfilled, (state, action) => {
       state.types = action.payload;
       state.error = "";
-      state.loading = false
+      state.loading = false;
     });
     builder.addCase(fetchTypes.rejected, (state, action) => {
       state.types = [];
       state.error = action.error.message;
-      state.loading = false
+      state.loading = false;
     });
     builder.addCase(addTypes.rejected, (state, action) => {
       state.types = [];
@@ -105,17 +150,35 @@ const TypesSlice = createSlice({
     builder.addCase(deleteType.rejected, (state, action) => {
       state.types = [];
       state.error = action.error.message;
-      state.loading = false
-      
+      state.loading = false;
     });
     builder.addCase(addTypes.fulfilled, (state, action) => {
       state.types.push(action.payload);
-      state.loading = false
+      state.loading = false;
     });
     builder.addCase(deleteType.fulfilled, (state, action) => {
-        state.types = state.types.filter(type => type.id != action.payload)
-        state.loading = false
-    })
+      state.types = state.types.filter((type) => type.id != action.payload);
+      state.loading = false;
+    });
+    builder.addCase(updateType.rejected, (state, action) => {
+      state.types = [];
+      state.error = action.error.message;
+      state.loading = false;
+    });
+    builder.addCase(updateType.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(updateType.fulfilled, (state,action) => {
+      state.loading = false;
+      state.types = state.types.map((type) => {
+        if (type.id == action.payload.id) {
+          return action.payload;
+        } else {
+          return type;
+        }
+      });
+    });
+    
   },
 });
 
@@ -123,4 +186,4 @@ export const selectTypes = (state: RootState) => state.types;
 
 export default TypesSlice.reducer;
 
-export const {startAddingTypes} = TypesSlice.actions
+export const {startAddingTypes, startUpdatingTypes} = TypesSlice.actions

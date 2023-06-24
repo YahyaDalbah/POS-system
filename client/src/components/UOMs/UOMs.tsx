@@ -11,7 +11,7 @@ export default function UOMs() {
   const dispatch = useAppDispatch();
 
   function handleClick() {
-    if (!types.adding && !uoms.updating.updating) dispatch(startAdding());
+    if (!types.adding && !uoms.updating.updating && !types.updating.updating) dispatch(startAdding());
   }
   const displayedUOMs = uoms.UOMs.map((uom) => {
     return <UOM {...uom} />;
@@ -19,7 +19,7 @@ export default function UOMs() {
   return (
     <div className=" mt-12">
       <div className="pl-10 mb-5 flex gap-x-10">
-        <h1 className="text-xl">Units of measure</h1>
+        <h1 className="text-xl pt-1">Units of measure</h1>
         <button onClick={handleClick} className="add-button">
           Add a UOM
         </button>

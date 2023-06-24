@@ -3,13 +3,15 @@ import productsReducer from "../components/Products/productsSlice";
 import categoriesReducer from "../components/Categories/categoriesSlice";
 import UOMsReducer from "../components/UOMs/UOMsSlice";
 import TypesReducer from '../components/UOMs/UOMtypesSlice';
+import CartsReducer from "../components/carts/CartsSlice";
 
 const store = configureStore({
   reducer: {
     products: productsReducer,
     categories: categoriesReducer,
     uoms: UOMsReducer,
-    types: TypesReducer
+    types: TypesReducer,
+    carts: CartsReducer,
   },
 });
 

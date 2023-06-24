@@ -6,7 +6,7 @@ export default function Nav() {
 
   const links = [
     {
-      text: "Menu",
+      text: "POS page",
       to: "/",
     },
     {
@@ -24,7 +24,7 @@ export default function Nav() {
   };
 
   return (
-    <nav className="">
+    <nav className="bg-lightBlack">
       <h1 className="text-white text-center pr-10 py-12 text-3xl mb-10">
         Yahya POS
       </h1>

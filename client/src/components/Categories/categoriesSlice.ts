@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../../store/store";
+import { updateProductsByCategory } from "../Products/productsSlice";
 type Category = {
   category: string;
   id?: number;
@@ -8,15 +9,23 @@ type CategoriesType = Category[];
 
 type InitialState = {
   categories: CategoriesType;
-  loading: boolean
+  loading: boolean;
   error: string | undefined;
   adding: boolean;
+  updating: {
+    updating: boolean;
+    id?: number;
+    category?: string;
+  };
 };
 const initialState: InitialState = {
   categories: [],
   error: "",
   adding: false,
-  loading: false
+  loading: false,
+  updating: {
+    updating: false,
+  },
 };
 
 export const fetchCategories = createAsyncThunk(
@@ -31,8 +40,6 @@ export const fetchCategories = createAsyncThunk(
 export const deleteCategory = createAsyncThunk(
   "categories/delete",
   async ({ category, id }: Category) => {
-    
-    
     const productsRes = await fetch(
       `http://localhost:3000/products?category=${category}`
     );
@@ -42,10 +49,10 @@ export const deleteCategory = createAsyncThunk(
         method: "DELETE",
       });
     });
-    await fetch(`http://localhost:3000/categories/${id}`,{
-      method:"DELETE"
+    await fetch(`http://localhost:3000/categories/${id}`, {
+      method: "DELETE",
     });
-    return id
+    return id;
   }
 );
 
@@ -66,12 +73,40 @@ export const addCategory = createAsyncThunk(
   }
 );
 
+export const updateCategory = createAsyncThunk(
+  "categories/update",
+  async (values: any, { dispatch, getState }) => {
+    const state: any = getState();
+    const res = await fetch(`http://localhost:3000/categories/${values.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+    const data = await res.json();
+    console.log(state.categories)
+    dispatch(
+      updateProductsByCategory({
+        prevCategory: state.categories.updating.category,
+        currCategory: values.category,
+      })
+    );
+    return data;
+  }
+);
+
 const categoriesSlice = createSlice({
   name: "categories",
   initialState,
   reducers: {
     startAdding: (state) => {
       state.adding = !state.adding;
+    },
+    startUpdating: (state, action) => {
+      state.updating.updating = !state.updating.updating;
+      state.updating.id = action.payload.id;
+      state.updating.category = action.payload.category
     },
   },
   extraReducers: (builder) => {
@@ -84,7 +119,7 @@ const categoriesSlice = createSlice({
       state.error = action.error.message;
     });
     builder.addCase(addCategory.pending, (state, action) => {
-      state.loading = true
+      state.loading = true;
     });
     builder.addCase(addCategory.fulfilled, (state, action) => {
       state.categories.push(action.payload);
@@ -95,14 +130,35 @@ const categoriesSlice = createSlice({
       state.loading = false;
     });
     builder.addCase(deleteCategory.pending, (state, action) => {
-      state.loading = true
+      state.loading = true;
     });
-    builder.addCase(deleteCategory.fulfilled, (state,action) => {
-      state.categories = state.categories.filter(category => category.id != action.payload)
-      state.loading = false
-    })
+    builder.addCase(deleteCategory.fulfilled, (state, action) => {
+      state.categories = state.categories.filter(
+        (category) => category.id != action.payload
+      );
+      state.loading = false;
+    });
     builder.addCase(deleteCategory.rejected, (state, action) => {
       state.error = action.error.message;
+      state.loading = false;
+    });
+    builder.addCase(updateCategory.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(updateCategory.rejected, (state, action) => {
+      console.log(action.error.stack)
+      state.error = action.error.message;
+      state.loading = false;
+    });
+    builder.addCase(updateCategory.fulfilled, (state, action) => {
+      state.categories = state.categories.map((category) => {
+        if (category.id == action.payload.id) {
+          return action.payload;
+        } else {
+          return category;
+        }
+      });
+
       state.loading = false;
     });
   },
@@ -110,4 +166,4 @@ const categoriesSlice = createSlice({
 
 export const selectCategories = (state: RootState) => state.categories;
 export default categoriesSlice.reducer;
-export const { startAdding } = categoriesSlice.actions;
+export const { startAdding, startUpdating } = categoriesSlice.actions;

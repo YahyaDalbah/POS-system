@@ -16,7 +16,10 @@ export default function ProductsPage() {
     <div className="main-page">
       <div
         className={`bg-gray-200 text-gray-900 col-span-${
-          products.adding || categories.adding || products.updating.updating
+          products.adding ||
+          categories.adding ||
+          products.updating.updating ||
+          categories.updating.updating
             ? 3
             : 4
         }`}
@@ -33,6 +36,9 @@ export default function ProductsPage() {
       {products.adding && <AddProductForm />}
       {products.updating.updating && (
         <AddProductForm update={true} id={products.updating.id} />
+      )}
+      {categories.updating.updating && (
+        <AddCategoryForm update={true} id={categories.updating.id} />
       )}
     </div>
   );

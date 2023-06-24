@@ -57,7 +57,7 @@ export default function AddProductForm({ update, id }: PropsType) {
             dispatch(updateProduct({ id, ...values, uom:uom }));
             dispatch(startUpdating(id));
           } else {
-            if (uom) dispatch(addProduct({ ...values, uom: uom }));
+            if(uom)dispatch(addProduct({ ...values, uom: uom }));
             dispatch(startAdding());
           }
         }}
@@ -88,6 +88,7 @@ export default function AddProductForm({ update, id }: PropsType) {
               name="price"
               id="price"
             />
+            <TextInput type="text" label="Image link" name="image" id="image" />
             <SelectInput label="Category" name="category" id="category">
               <option value="">Select a category</option>
               {categoriesOptions}

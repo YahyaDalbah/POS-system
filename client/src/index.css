@@ -16,16 +16,23 @@
 .add-button{
   @apply text-gray-900 bg-white border border-gray-800 focus:outline-none hover:bg-gray-100 focus:ring-1 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2
 }
+.add-to-cart-button{
+  @apply text-gray-900 bg-gray-100 border border-gray-800 focus:outline-none hover:bg-white focus:ring-1 focus:ring-gray-200 font-medium rounded-xl text-xl px-5 py-2.5 mr-2 mb-2
+}
 .update-button{
-  @apply text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800
+  @apply text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800
 }
 .delete-button{
-  @apply focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-1 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900
+  @apply focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-1 focus:ring-red-300 font-medium rounded-lg px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900
+}
+.min-w-32{
+  min-width: 8rem
 }
 
 
 ::-webkit-scrollbar {
     height: 7px;
+    width: 8px;
 }
 
 /* Track */
@@ -42,7 +49,7 @@
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
-    width: 10px;
+    width: 5px;
 }
 
 input::-webkit-outer-spin-button,
@@ -54,4 +61,7 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+body{
+  overflow-x: auto;
 }

@@ -1,8 +1,8 @@
 import React from "react";
-import { useAppDispatch } from "../../store/hooks";
-import { deleteUOMsByType, filterUomByType } from "./UOMsSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { deleteUOMsByType, filterUomByType, selectUOMs } from "./UOMsSlice";
 import Swal from "sweetalert2";
-import { deleteType } from "./UOMtypesSlice";
+import { deleteType, selectTypes, startUpdatingTypes } from "./UOMtypesSlice";
 import { deleteProductsByType } from "../Products/productsSlice";
 
 interface UOMProps {
@@ -20,6 +20,8 @@ export default function UOMtype({
   i,
   base
 }: UOMProps) {
+  const uoms = useAppSelector(selectUOMs)
+  const types = useAppSelector(selectTypes)
   const dispatch = useAppDispatch();
   function handleClick() {
     if (activeLink !== i) {
@@ -46,6 +48,10 @@ export default function UOMtype({
       }
     });
   }
+  function handleUpdate(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    e.stopPropagation();
+    if(!uoms.adding && !uoms.updating.updating && !types.adding)dispatch(startUpdatingTypes({ id: i, type }));
+  }
 
   return (
     <div>
@@ -58,12 +64,20 @@ export default function UOMtype({
         onClick={handleClick}
       >
         {type != "All" && (
-          <button
-            className="-ml-1 mr-3 bg-gray-600 hover:bg-red-600 px-1.5 text-white rounded-full"
-            onClick={handleDelete}
-          >
-            x
-          </button>
+          <div className="flex">
+            <button
+              className="-ml-1 mr-3 bg-gray-600 hover:bg-red-600 px-1.5 text-white rounded-full"
+              onClick={handleDelete}
+            >
+              x
+            </button>
+            <button
+              className="-ml-1 mr-3 bg-gray-600 hover:bg-blue-600 px-1.5 text-white rounded-full"
+              onClick={handleUpdate}
+            >
+              u
+            </button>
+          </div>
         )}
         {type}
       </button>

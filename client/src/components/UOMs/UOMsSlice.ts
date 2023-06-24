@@ -79,6 +79,53 @@ export const updateUOM = createAsyncThunk(
   }
 );
 
+export const updateUOMsByType = createAsyncThunk(
+  "UOMs/updateByType",
+  async (payload: any, { getState }) => {
+    const state: any = getState();
+    const uoms: UOM[] = state.uoms.UOMs;
+    const res = Promise.all(
+      uoms.map(async (uom) => {
+        if (uom.type == payload.prevType) {
+          if(uom.convFactor == 1){
+            const res = await fetch(`http://localhost:3000/uoms/${uom.id}`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                type: payload.currType,
+                base: payload.currBase,
+                name: payload.currBase
+              }),
+            });
+            const data: UOM = await res.json();
+            return data;
+          }else{
+            const res = await fetch(`http://localhost:3000/uoms/${uom.id}`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                type: payload.currType,
+                base: payload.currBase,
+              }),
+            });
+            const data: UOM = await res.json();
+            return data;
+          }
+          
+        } else {
+          return uom;
+        }
+      })
+    );
+    const data: UOM[] = await res;
+    return data;
+  }
+);
+
 const UOMsSlice = createSlice({
   name: "UOMs",
   initialState,
@@ -96,6 +143,7 @@ const UOMsSlice = createSlice({
       });
       state.UOMs = pro;
     },
+    
   },
   extraReducers: (builder) => {
     builder.addCase(fetchUOMs.pending, (state) => {
@@ -145,7 +193,7 @@ const UOMsSlice = createSlice({
     });
     builder.addCase(addUOM.fulfilled, (state, action) => {
       state.UOMs.push(action.payload);
-      state.loading = false
+      state.loading = false;
     });
 
     builder.addCase(filterUomByType.fulfilled, (state, action) => {
@@ -156,7 +204,7 @@ const UOMsSlice = createSlice({
 
     builder.addCase(deleteUOM.fulfilled, (state, action) => {
       state.UOMs = state.UOMs.filter((uom) => uom.id != action.payload);
-      state.loading = false
+      state.loading = false;
     });
     builder.addCase(updateUOM.fulfilled, (state, action) => {
       state.UOMs = state.UOMs.map((uom) => {
@@ -166,7 +214,19 @@ const UOMsSlice = createSlice({
           return uom;
         }
       });
-      state.loading = false
+      state.loading = false;
+    });
+    builder.addCase(updateUOMsByType.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(updateUOMsByType.rejected, (state, action) => {
+      state.loading = false;
+      state.UOMs = [];
+      state.error = action.error.message;
+    });
+    builder.addCase(updateUOMsByType.fulfilled, (state,action) => {
+      state.loading = false;
+      state.UOMs = action.payload
     });
   },
 });
@@ -175,5 +235,8 @@ export const selectUOMs = (state: RootState) => state.uoms;
 
 export default UOMsSlice.reducer;
 
-export const { deleteUOMsByType, startAdding, startUpdating } =
-  UOMsSlice.actions;
+export const {
+  deleteUOMsByType,
+  startAdding,
+  startUpdating,
+} = UOMsSlice.actions;

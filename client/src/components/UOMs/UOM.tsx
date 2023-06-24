@@ -13,7 +13,7 @@ export default function UOMCard({ id, name, type, base, convFactor }: UOM) {
     dispatch(deleteUOM(id))
   }
   function handleUpdate(){
-    if(!uoms.adding && !types.adding)dispatch(startUpdating(id))
+    if(!uoms.adding && !types.adding && !types.updating.updating)dispatch(startUpdating(id))
   }
   return (
     <div className="bg-gray-100 rounded-md px-10 py-5">

@@ -24,9 +24,9 @@ type InitialState = {
   error: string | undefined;
   adding: boolean;
   updating: {
-    updating: boolean
-    id?: number
-  }
+    updating: boolean;
+    id?: number;
+  };
 };
 
 const initialState: InitialState = {
@@ -35,8 +35,8 @@ const initialState: InitialState = {
   error: "",
   adding: false,
   updating: {
-    updating: false
-  }
+    updating: false,
+  },
 };
 
 export const fetchProducts = createAsyncThunk("products/fetch", async () => {
@@ -86,13 +86,79 @@ export const updateProduct = createAsyncThunk(
   "products/update",
   async (values: any) => {
     const res = await fetch(`http://localhost:3000/products/${values.id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(values),
     });
     const data = await res.json();
+    return data;
+  }
+);
+
+export const updateProductsByCategory = createAsyncThunk(
+  "products/updateByCategory",
+  async (payload: any, { getState }) => {
+    const state: any = getState();
+    const products: ProductType[] = state.products.products;
+    const res = Promise.all(
+      products.map(async (product) => {
+        if (product.category == payload.prevCategory) {
+          console.log(payload)
+          const res = await fetch(
+            `http://localhost:3000/products/${product.id}`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({category: payload.currCategory}),
+            }
+          );
+          const data: ProductType = await res.json();
+          return data;
+        } else {
+          return product;
+        }
+      })
+    );
+    const data: ProductType[] = await res;
+    return data;
+  }
+);
+
+export const updateProductsByTypeOfMeasure = createAsyncThunk(
+  "products/updateProductsByTypeOfMeasure",
+  async (payload: any, { getState }) => {
+    const state: any = getState();
+    const products: ProductType[] = state.products.products;
+    const res = Promise.all(
+      products.map(async (product) => {
+        if (product.uom.type == payload.prevType) {
+          const res = await fetch(
+            `http://localhost:3000/products/${product.id}`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ uom: {
+                base: payload.currBase,
+                type: payload.currType,
+                convFactor: product.uom.convFactor,
+                name: product.uom.name
+              } }),
+            }
+          );
+          const data: ProductType = await res.json();
+          return data;
+        } else {
+          return product;
+        }
+      })
+    );
+    const data: ProductType[] = await res;
     return data;
   }
 );
@@ -104,9 +170,9 @@ const productsSlice = createSlice({
     startAdding: (state) => {
       state.adding = !state.adding;
     },
-    startUpdating: (state,action) => {
-      state.updating.updating = !state.updating.updating
-      state.updating.id = action.payload
+    startUpdating: (state, action) => {
+      state.updating.updating = !state.updating.updating;
+      state.updating.id = action.payload;
     },
     deleteProductsByCategory: (state, action) => {
       state.products = state.products.filter(
@@ -134,14 +200,14 @@ const productsSlice = createSlice({
       state.error = action.error.message;
     });
     builder.addCase(addProduct.pending, (state, action) => {
-      state.loading = true
+      state.loading = true;
     });
     builder.addCase(addProduct.fulfilled, (state, action) => {
       state.products.push(action.payload);
       state.loading = false;
     });
     builder.addCase(addProduct.rejected, (state, action) => {
-      state.error = action.error.message
+      state.error = action.error.message;
       state.loading = false;
     });
     builder.addCase(filterByCategory.pending, (state) => {
@@ -158,7 +224,7 @@ const productsSlice = createSlice({
       state.error = action.error.message;
     });
     builder.addCase(deleteProduct.pending, (state, action) => {
-      state.loading = true
+      state.loading = true;
     });
     builder.addCase(deleteProduct.fulfilled, (state, action) => {
       state.products = state.products.filter(
@@ -167,8 +233,8 @@ const productsSlice = createSlice({
       state.loading = false;
     });
     builder.addCase(deleteProduct.rejected, (state, action) => {
-      state.error = action.error.message
-      state.loading = false
+      state.error = action.error.message;
+      state.loading = false;
     });
     builder.addCase(updateProduct.pending, (state, action) => {
       state.loading = true;
@@ -185,7 +251,29 @@ const productsSlice = createSlice({
           return product;
         }
       });
-      state.loading = false
+      state.loading = false;
+    });
+    builder.addCase(updateProductsByCategory.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(updateProductsByCategory.rejected, (state, action) => {
+      state.error = action.error.message;
+      state.loading = false;
+    });
+    builder.addCase(updateProductsByCategory.fulfilled, (state, action) => {
+      state.loading = false;
+      state.products = action.payload;
+    });
+    builder.addCase(updateProductsByTypeOfMeasure.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(updateProductsByTypeOfMeasure.rejected, (state, action) => {
+      state.error = action.error.message;
+      state.loading = false;
+    });
+    builder.addCase(updateProductsByTypeOfMeasure.fulfilled, (state, action) => {
+      state.loading = false;
+      state.products = action.payload;
     });
   },
 });
@@ -194,4 +282,9 @@ export const selectProducts = (state: RootState) => state.products;
 
 export default productsSlice.reducer;
 
-export const { startAdding, startUpdating, deleteProductsByCategory, deleteProductsByType } = productsSlice.actions;
+export const {
+  startAdding,
+  startUpdating,
+  deleteProductsByCategory,
+  deleteProductsByType,
+} = productsSlice.actions;

@@ -14,7 +14,8 @@ export default function UOMsPage() {
   const types = useAppSelector(selectTypes);
   const [activeLink, setActiveLink] = useState(0);
   function handleClick() {
-    if (!uoms.adding && !uoms.updating.updating) dispatch(startAddingTypes());
+    if (!uoms.adding && !uoms.updating.updating && !types.updating.updating)
+      dispatch(startAddingTypes());
   }
   const displayedUOMsTypes = types.types.map((type) => (
     <UOMtype
@@ -30,7 +31,7 @@ export default function UOMsPage() {
     <div className="main-page">
       <div
         className={`bg-gray-200 col-span-${
-          uoms.adding || types.adding || uoms.updating.updating ? 3 : 4
+          uoms.adding || types.adding || uoms.updating.updating || types.updating.updating ? 3 : 4
         } text-gray-900 `}
       >
         <div className="font-medium flex p-10 pr-32 bg-white items-center">
@@ -65,6 +66,9 @@ export default function UOMsPage() {
       {uoms.adding && <AddUOMForm />}
       {uoms.updating.updating && (
         <AddUOMForm update={true} id={uoms.updating.id} />
+      )}
+      {types.updating.updating && (
+        <AddUOMTypeForm update={true} id={types.updating.id} />
       )}
     </div>
   );
