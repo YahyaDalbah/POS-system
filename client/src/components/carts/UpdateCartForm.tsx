@@ -16,9 +16,7 @@ export default function UpdateCartForm({id}:{id?:number}) {
             tax: 0,
             discount: 0,
           }}
-          validationSchema={Yup.object({
-            title: Yup.string().required("Must specify cart's title"),
-          })}
+          validationSchema={Yup.object({})}
           onSubmit={(values) => {
             const filteredObject = Object.fromEntries(
               Object.entries(values).filter(([_, value]) => {

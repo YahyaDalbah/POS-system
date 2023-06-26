@@ -17,8 +17,8 @@ export default function CartDisplay() {
     return <CartProduct {...cart} />;
   });
   const discount =
-    (subtotal + (cart.tax * subtotal) / 100) * (cart.discount / 100);
-
+    Number(((subtotal + (cart.tax * subtotal) / 100) * (cart.discount / 100)).toFixed(2))
+  const tax = Number(((cart.tax * subtotal) / 100).toFixed(2))
   function handleCheckout() {
     Swal.fire({
       title: "Are you sure?",
@@ -63,15 +63,15 @@ export default function CartDisplay() {
             </div>
             <div className="flex justify-between">
               <p>tax {cart.tax}%</p>
-              <p>$10</p>
+              <p>${tax}</p>
             </div>
             <div className="flex justify-between">
               <p>discount {cart.discount}%</p>
-              <p>$10</p>
+              <p>${discount}</p>
             </div>
             <div className=" mt-4 pt-6 text-2xl flex justify-between border-t border-t-gray-600 border-dashed">
               <p>Total</p>
-              <p>${subtotal + (cart.tax * subtotal) / 100 - discount}</p>
+              <p>${subtotal + tax - discount}</p>
             </div>
           </div>
         )}

@@ -86,27 +86,21 @@
   ],
   "carts": [
     {
-      "id": 2,
+      "title": "test",
+      "desc": "very very very very very very very  long desc",
+      "tax": 10,
+      "discount": 10,
       "cartProducts": [
         {
           "id": 1,
+          "name": "iphone 12",
+          "uom": "each",
           "price": 1000,
-          "name": "orange",
-          "qty": 1,
-          "uom": "kg"
-        },
-        {
-          "id": 2,
-          "price": 2000,
-          "name": "mobile",
-          "qty": 1,
-          "uom": "each"
+          "qty": 1
         }
       ],
-      "tax": 32,
-      "discount": 54,
-      "desc": "hrd",
-      "title": "y5r"
+      "total": 0,
+      "id": 1
     }
   ]
 }

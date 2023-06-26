@@ -38,10 +38,10 @@ const initialState: InitialState = {
   error: "",
   adding: false,
   showingCart: {
-    showing: false
+    showing: false,
   },
-  updating:{
-    updating:false
+  updating: {
+    updating: false,
   },
   carts: [],
 };
@@ -67,12 +67,15 @@ export const addCart = createAsyncThunk(
   }
 );
 
-export const checkoutCart = createAsyncThunk("carts/checkout", async (id:any) => {
-  await fetch(`http://localhost:3000/carts/${id}`,{
-    method:"DELETE"
-  });
-  return id
-});
+export const checkoutCart = createAsyncThunk(
+  "carts/checkout",
+  async (id: any) => {
+    await fetch(`http://localhost:3000/carts/${id}`, {
+      method: "DELETE",
+    });
+    return id;
+  }
+);
 
 export const updateCart = createAsyncThunk(
   "carts/update",
@@ -82,9 +85,138 @@ export const updateCart = createAsyncThunk(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(values)
+      body: JSON.stringify(values),
     });
-    const data = await res.json()
+    const data = await res.json();
+    return data;
+  }
+);
+
+export const addProductToCart = createAsyncThunk(
+  "carts/addProductToCart",
+  async (values: {
+    cartId: number;
+    ProductId: number;
+    name: string;
+    uom: string;
+    price: number;
+  }) => {
+    const cartRes = await fetch(`http://localhost:3000/carts/${values.cartId}`);
+    const cart: CartType = await cartRes.json();
+    let productInCart = false;
+    if(cart.cartProducts.length == 0){
+      cart.cartProducts.push({
+        id: 1,
+        name: values.name,
+        uom: values.uom,
+        price: values.price,
+        qty: 1,
+      });
+      const res = await fetch(`http://localhost:3000/carts/${values.cartId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cart),
+      });
+      const data = await res.json();
+      return data;
+    }
+    cart.cartProducts = cart.cartProducts.map((product) => {
+      if (product.id === values.ProductId) {
+        productInCart = true;
+        return {
+          ...product,
+          qty: product.qty + 1,
+        };
+      } else {
+        return product;
+      }
+    });
+
+    if (productInCart) {
+      const res = await fetch(`http://localhost:3000/carts/${values.cartId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cart),
+      });
+      const data = await res.json();
+      return data;
+    } else {
+      const id = cart.cartProducts[cart.cartProducts.length - 1].id as number;
+      cart.cartProducts.push({
+        id: id + 1,
+        name: values.name,
+        uom: values.uom,
+        price: values.price,
+        qty: 1,
+      });
+      const res = await fetch(`http://localhost:3000/carts/${values.cartId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cart),
+      });
+      const data = await res.json();
+      return data;
+    }
+  }
+);
+
+export const reduceProductFromCart = createAsyncThunk(
+  "carts/reduceProductFromCart",
+  async (values: {
+    cartId: number;
+    ProductId: number;
+    name: string;
+    uom: string;
+    price: number;
+  }) => {
+    const cartRes = await fetch(`http://localhost:3000/carts/${values.cartId}`);
+    const cart: CartType = await cartRes.json();
+    cart.cartProducts = cart.cartProducts.map((product) => {
+      if (product.id === values.ProductId) {
+        return {
+          ...product,
+          qty: product.qty - 1,
+        };
+      } else {
+        return product;
+      }
+    });
+    cart.cartProducts = cart.cartProducts.filter((cart) => cart.qty != 0);
+
+    const res = await fetch(`http://localhost:3000/carts/${values.cartId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(cart),
+    });
+    const data = await res.json();
+    return data;
+  }
+);
+
+export const deleteCartProduct = createAsyncThunk(
+  "carts/deleteCartProduct",
+  async (values: { cartId: number; ProductId: number }) => {
+    const cartRes = await fetch(`http://localhost:3000/carts/${values.cartId}`);
+    const cart: CartType = await cartRes.json();
+    cart.cartProducts = cart.cartProducts.filter((product) => product.id != values.ProductId);
+
+    const res = await fetch(`http://localhost:3000/carts/${values.cartId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(cart),
+    });
+
+    const data = await res.json();
     return data;
   }
 );
@@ -97,16 +229,16 @@ const cartsSlice = createSlice({
       state.adding = !state.adding;
     },
     showCart: (state, action) => {
-      state.showingCart.showing = true
-      state.showingCart.id = action.payload
+      state.showingCart.showing = true;
+      state.showingCart.id = action.payload;
     },
-    stopShowing: state => {
-      state.showingCart.showing = false
+    stopShowing: (state) => {
+      state.showingCart.showing = false;
     },
-    startUpdating: (state,action) => {
-      state.updating.updating = !state.updating.updating
-      state.updating.id = action.payload
-    }
+    startUpdating: (state, action) => {
+      state.updating.updating = !state.updating.updating;
+      state.updating.id = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchCarts.pending, (state) => {
@@ -140,7 +272,7 @@ const cartsSlice = createSlice({
     });
     builder.addCase(checkoutCart.fulfilled, (state, action) => {
       state.loading = false;
-      state.carts = state.carts.filter(cart => cart.id != action.payload)
+      state.carts = state.carts.filter((cart) => cart.id != action.payload);
     });
     builder.addCase(updateCart.pending, (state) => {
       state.loading = true;
@@ -152,10 +284,62 @@ const cartsSlice = createSlice({
     builder.addCase(updateCart.fulfilled, (state, action) => {
       state.loading = false;
       state.carts = state.carts.map((cart) => {
-        if(cart.id == action.payload.id){
-          return action.payload
-        }else{
-          return cart
+        if (cart.id == action.payload.id) {
+          return action.payload;
+        } else {
+          return cart;
+        }
+      });
+    });
+    builder.addCase(addProductToCart.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(addProductToCart.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+      console.log(action.error)
+    });
+    builder.addCase(addProductToCart.fulfilled, (state, action) => {
+      state.loading = false;
+      state.carts = state.carts.map((cart) => {
+        if (cart.id == action.payload.id) {
+          return action.payload;
+        } else {
+          return cart;
+        }
+      });
+    });
+    builder.addCase(reduceProductFromCart.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(reduceProductFromCart.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+    builder.addCase(reduceProductFromCart.fulfilled, (state, action) => {
+      state.loading = false;
+      state.carts = state.carts.map((cart) => {
+        if (cart.id == action.payload.id) {
+          return action.payload;
+        } else {
+          return cart;
+        }
+      });
+    });
+    builder.addCase(deleteCartProduct.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(deleteCartProduct.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+    builder.addCase(deleteCartProduct.fulfilled, (state, action) => {
+      state.loading = false;
+      state.carts = state.carts.map((cart) => {
+        if (cart.id == action.payload.id) {
+          return action.payload;
+        } else {
+          return cart;
         }
       });
     });
@@ -166,4 +350,5 @@ export default cartsSlice.reducer;
 
 export const selectCarts = (state: RootState) => state.carts;
 
-export const { startUpdating,startAdding, showCart ,stopShowing} = cartsSlice.actions;
+export const { startUpdating, startAdding, showCart, stopShowing } =
+  cartsSlice.actions;

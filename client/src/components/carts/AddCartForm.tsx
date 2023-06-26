@@ -11,7 +11,6 @@ const initialValues: CartType = {
   tax: 0,
   discount: 0,
   cartProducts: [],
-  total: 0,
 };
 
 export default function AddCartForm() {
@@ -42,7 +41,12 @@ export default function AddCartForm() {
               </button>
             </div>
             <div className="flex flex-col mx-2">
-              <TextInput type="text" label="Cart name" name="title" id="title" />
+              <TextInput
+                type="text"
+                label="Cart name"
+                name="title"
+                id="title"
+              />
               <TextInput
                 type="text"
                 label="Cart description"
