@@ -16,6 +16,7 @@ export interface ProductType {
   image: string;
   price: number;
   uom: UOM;
+  code: string
 }
 
 type InitialState = {
@@ -27,6 +28,7 @@ type InitialState = {
     updating: boolean;
     id?: number;
   };
+  currCategory?: string
 };
 
 const initialState: InitialState = {
@@ -44,18 +46,6 @@ export const fetchProducts = createAsyncThunk("products/fetch", async () => {
   const data = await res.json();
   return data;
 });
-
-export const filterByCategory = createAsyncThunk(
-  "products/filter",
-  async (category: string) => {
-    const res =
-      category != "All"
-        ? await fetch(`http://localhost:3000/products?category=${category}`)
-        : await fetch(`http://localhost:3000/products`);
-    const data = await res.json();
-    return data;
-  }
-);
 
 export const addProduct = createAsyncThunk(
   "products/add",
@@ -184,6 +174,25 @@ const productsSlice = createSlice({
         (product) => product.uom.type != action.payload
       );
     },
+    updateProductByUOM: (state, action) => {
+      state.products = state.products.map((product) =>
+        product.uom.name != action.payload.name
+          ? product
+          : {
+              ...product,
+              price: product.price * product.uom.convFactor,
+              uom: {
+                ...product.uom,
+                id: action.payload.id,
+                name: action.payload.base,
+                convFactor: 1,
+              },
+            }
+      );
+    },
+    filterByCategory: (state, action) => {
+      state.currCategory = action.payload
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchProducts.pending, (state) => {
@@ -199,7 +208,7 @@ const productsSlice = createSlice({
       state.products = [];
       state.error = action.error.message;
     });
-    builder.addCase(addProduct.pending, (state, action) => {
+    builder.addCase(addProduct.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(addProduct.fulfilled, (state, action) => {
@@ -210,20 +219,7 @@ const productsSlice = createSlice({
       state.error = action.error.message;
       state.loading = false;
     });
-    builder.addCase(filterByCategory.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(filterByCategory.fulfilled, (state, action) => {
-      state.loading = false;
-      state.products = action.payload;
-      state.error = "";
-    });
-    builder.addCase(filterByCategory.rejected, (state, action) => {
-      state.loading = false;
-      state.products = [];
-      state.error = action.error.message;
-    });
-    builder.addCase(deleteProduct.pending, (state, action) => {
+    builder.addCase(deleteProduct.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(deleteProduct.fulfilled, (state, action) => {
@@ -236,7 +232,7 @@ const productsSlice = createSlice({
       state.error = action.error.message;
       state.loading = false;
     });
-    builder.addCase(updateProduct.pending, (state, action) => {
+    builder.addCase(updateProduct.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(updateProduct.rejected, (state, action) => {
@@ -253,7 +249,7 @@ const productsSlice = createSlice({
       });
       state.loading = false;
     });
-    builder.addCase(updateProductsByCategory.pending, (state, action) => {
+    builder.addCase(updateProductsByCategory.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(updateProductsByCategory.rejected, (state, action) => {
@@ -264,17 +260,20 @@ const productsSlice = createSlice({
       state.loading = false;
       state.products = action.payload;
     });
-    builder.addCase(updateProductsByTypeOfMeasure.pending, (state, action) => {
+    builder.addCase(updateProductsByTypeOfMeasure.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(updateProductsByTypeOfMeasure.rejected, (state, action) => {
       state.error = action.error.message;
       state.loading = false;
     });
-    builder.addCase(updateProductsByTypeOfMeasure.fulfilled, (state, action) => {
-      state.loading = false;
-      state.products = action.payload;
-    });
+    builder.addCase(
+      updateProductsByTypeOfMeasure.fulfilled,
+      (state, action) => {
+        state.loading = false;
+        state.products = action.payload;
+      }
+    );
   },
 });
 
@@ -287,4 +286,6 @@ export const {
   startUpdating,
   deleteProductsByCategory,
   deleteProductsByType,
+  updateProductByUOM,
+  filterByCategory,
 } = productsSlice.actions;

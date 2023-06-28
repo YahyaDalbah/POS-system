@@ -22,32 +22,45 @@ export default function AddUOMForm({ update, id }: PropsType) {
       <Formik
         initialValues={{ type: "", base: "", name: "", convFactor: 0 }}
         validationSchema={Yup.object({
-          type: Yup.string()
-            .required("Must select type")
-            .test("notNumber", "String must not be a number", (value) => {
-              return isNaN(Number(value));
-            }),
-          name: Yup.string()
-            .required("Must specify name")
-            .test("notNumber", "String must not be a number", (value) => {
-              return isNaN(Number(value));
-            }),
-          convFactor: Yup.number()
+          type: !update
+            ? Yup.string()
+                .required("Must select type")
+                .test("notNumber", "String must not be a number", (value) => {
+                  return isNaN(Number(value));
+                })
+            : Yup.string(),
+          name: !update
+            ? Yup.string()
+                .required("Must specify name")
+                .test("notNumber", "String must not be a number", (value) => {
+                  return isNaN(Number(value));
+                })
+            : Yup.string(),
+          convFactor: !update ? Yup.number()
             .required("Required")
             .moreThan(0)
             .test(
               "notEqual",
               "Number must not be equal to 1",
               (value) => value !== 1
-            ),
+            ) : Yup.number()
         })}
         onSubmit={(values) => {
-          if(update){
-            dispatch(updateUOM({ id, ...values }));
-            dispatch(startUpdating(id))
-          }else{
+          if (update) {
+            const filteredObject = Object.fromEntries(
+              Object.entries(values).filter(([_, value]) => {
+                if (typeof value === "string") {
+                  return value !== "";
+                } else {
+                  return value !== 0;
+                }
+              })
+            );
+            dispatch(updateUOM({ id, ...filteredObject }));
+            dispatch(startUpdating(id));
+          } else {
             dispatch(addUOM(values));
-            dispatch(startAdding())
+            dispatch(startAdding());
           }
         }}
       >
@@ -69,12 +82,7 @@ export default function AddUOMForm({ update, id }: PropsType) {
               </button>
             </div>
             <div className="flex flex-col mx-2">
-              <TextInput
-                type="text"
-                label="Name"
-                name="name"
-                id="name"
-              />
+              <TextInput type="text" label="Name" name="name" id="name" />
               <SelectInput
                 onChange={(event: any) => {
                   const selectedValue = event.target.value;

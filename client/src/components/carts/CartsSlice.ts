@@ -123,7 +123,7 @@ export const addProductToCart = createAsyncThunk(
       return data;
     }
     cart.cartProducts = cart.cartProducts.map((product) => {
-      if (product.id === values.ProductId) {
+      if (product.id === values.ProductId && values.uom === product.uom) {
         productInCart = true;
         return {
           ...product,

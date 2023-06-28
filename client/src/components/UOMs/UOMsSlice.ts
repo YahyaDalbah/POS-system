@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../../store/store";
-import { UOM } from "../Products/productsSlice";
+import { UOM, updateProductByUOM } from "../Products/productsSlice";
 
 type InitialState = {
   loading: boolean;
@@ -11,6 +11,7 @@ type InitialState = {
     updating: boolean;
     id?: number;
   };
+  currType?: string;
 };
 
 const initialState: InitialState = {
@@ -41,25 +42,49 @@ export const addUOM = createAsyncThunk("UOMs/add", async (UOM: UOM) => {
   return data;
 });
 
-export const filterUomByType = createAsyncThunk(
-  "UOMs/filter",
-  async (type: string) => {
-    const res =
-      type != "All"
-        ? await fetch(`http://localhost:3000/uoms?type=${type}`)
-        : await fetch(`http://localhost:3000/uoms`);
-    const data = await res.json();
-    return data;
-  }
-);
+// export const filterUomByType = createAsyncThunk(
+//   "UOMs/filter",
+//   async (type: string) => {
+//     const res =
+//       type != "All"
+//         ? await fetch(`http://localhost:3000/uoms?type=${type}`)
+//         : await fetch(`http://localhost:3000/uoms`);
+//     const data = await res.json();
+//     return data;
+//   }
+// );
 
 export const deleteUOM = createAsyncThunk(
   "UOMs/delete",
-  async (id: number | undefined) => {
-    const res = await fetch(`http://localhost:3000/uoms/${id}`, {
+  async (
+    { id, name, base }: { id?: number; name: string; base: string },
+    { getState, dispatch }
+  ) => {
+    const state = getState() as RootState;
+    let baseUOMId: number;
+    await Promise.all(
+      state.products.products
+        .filter((product) => {
+          if (product.uom.name === base) baseUOMId = product.uom.id as number;
+          return product.uom.id === id;
+        })
+        .map((product) => {
+          return fetch(`http://localhost:3000/products/${product.id}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              price: product.price * product.uom.convFactor,
+              uom: { ...product.uom, id: baseUOMId, name: base, convFactor: 1 },
+            }),
+          });
+        })
+    );
+    dispatch(updateProductByUOM({ id, name, base }));
+    await fetch(`http://localhost:3000/uoms/${id}`, {
       method: "DELETE",
     });
-    const data = await res.json();
     return id;
   }
 );
@@ -68,7 +93,7 @@ export const updateUOM = createAsyncThunk(
   "UOMs/update",
   async (values: any) => {
     const res = await fetch(`http://localhost:3000/uoms/${values.id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
@@ -87,7 +112,7 @@ export const updateUOMsByType = createAsyncThunk(
     const res = Promise.all(
       uoms.map(async (uom) => {
         if (uom.type == payload.prevType) {
-          if(uom.convFactor == 1){
+          if (uom.convFactor == 1) {
             const res = await fetch(`http://localhost:3000/uoms/${uom.id}`, {
               method: "PATCH",
               headers: {
@@ -96,12 +121,12 @@ export const updateUOMsByType = createAsyncThunk(
               body: JSON.stringify({
                 type: payload.currType,
                 base: payload.currBase,
-                name: payload.currBase
+                name: payload.currBase,
               }),
             });
             const data: UOM = await res.json();
             return data;
-          }else{
+          } else {
             const res = await fetch(`http://localhost:3000/uoms/${uom.id}`, {
               method: "PATCH",
               headers: {
@@ -115,7 +140,6 @@ export const updateUOMsByType = createAsyncThunk(
             const data: UOM = await res.json();
             return data;
           }
-          
         } else {
           return uom;
         }
@@ -143,7 +167,9 @@ const UOMsSlice = createSlice({
       });
       state.UOMs = pro;
     },
-    
+    filterUomByType: (state, action) => {
+      state.currType = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchUOMs.pending, (state) => {
@@ -152,9 +178,7 @@ const UOMsSlice = createSlice({
     builder.addCase(addUOM.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(filterUomByType.pending, (state) => {
-      state.loading = true;
-    });
+
     builder.addCase(deleteUOM.pending, (state) => {
       state.loading = true;
     });
@@ -176,11 +200,7 @@ const UOMsSlice = createSlice({
       state.UOMs = [];
       state.error = action.error.message;
     });
-    builder.addCase(filterUomByType.rejected, (state, action) => {
-      state.loading = false;
-      state.UOMs = [];
-      state.error = action.error.message;
-    });
+
     builder.addCase(fetchUOMs.fulfilled, (state, action) => {
       state.loading = false;
       state.UOMs = action.payload;
@@ -194,12 +214,6 @@ const UOMsSlice = createSlice({
     builder.addCase(addUOM.fulfilled, (state, action) => {
       state.UOMs.push(action.payload);
       state.loading = false;
-    });
-
-    builder.addCase(filterUomByType.fulfilled, (state, action) => {
-      state.loading = false;
-      state.UOMs = action.payload;
-      state.error = "";
     });
 
     builder.addCase(deleteUOM.fulfilled, (state, action) => {
@@ -224,9 +238,9 @@ const UOMsSlice = createSlice({
       state.UOMs = [];
       state.error = action.error.message;
     });
-    builder.addCase(updateUOMsByType.fulfilled, (state,action) => {
+    builder.addCase(updateUOMsByType.fulfilled, (state, action) => {
       state.loading = false;
-      state.UOMs = action.payload
+      state.UOMs = action.payload;
     });
   },
 });
@@ -235,8 +249,5 @@ export const selectUOMs = (state: RootState) => state.uoms;
 
 export default UOMsSlice.reducer;
 
-export const {
-  deleteUOMsByType,
-  startAdding,
-  startUpdating,
-} = UOMsSlice.actions;
+export const { filterUomByType, deleteUOMsByType, startAdding, startUpdating } =
+  UOMsSlice.actions;

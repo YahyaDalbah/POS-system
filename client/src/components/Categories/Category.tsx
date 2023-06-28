@@ -53,6 +53,7 @@ export default function Category({
       if (result.isConfirmed) {
         dispatch(deleteCategory({ category, id: i }));
         dispatch(deleteProductsByCategory(category));
+        if(categories.updating.updating)dispatch(startUpdating({ id: i, category }));
       }
     });
   }

@@ -1,12 +1,15 @@
-import React from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { addProduct, startAdding, startUpdating, updateProduct } from "./productsSlice";
+import {
+  addProduct,
+  startAdding,
+  startUpdating,
+  updateProduct,
+} from "./productsSlice";
 import TextInput from "../formInputs/TextInput";
 import SelectInput from "../formInputs/SelectInput";
 import { selectCategories } from "../Categories/categoriesSlice";
-import Product from "./Product";
 import { selectUOMs } from "../UOMs/UOMsSlice";
 
 interface PropsType {
@@ -19,7 +22,7 @@ export default function AddProductForm({ update, id }: PropsType) {
   const categories = useAppSelector(selectCategories);
   const uoms = useAppSelector(selectUOMs);
 
-  const categoriesOptions = categories.categories.slice(1).map((category) => {
+  const categoriesOptions = categories.categories.map((category) => {
     return <option value={category.category}>{category.category}</option>;
   });
   const UOMsOptions = uoms.UOMs.map((uom) => {
@@ -43,21 +46,38 @@ export default function AddProductForm({ update, id }: PropsType) {
             convFactor: 0,
           },
           image: "",
+          code: "",
         }}
         validationSchema={Yup.object({
-          name: Yup.string().required("Required"),
-          price: Yup.number().required("Required").moreThan(0),
-          category: Yup.string().required("Must select a category"),
-          uom: Yup.object({ name: Yup.string().required("Must select a UOM") }),
+          name: !update ? Yup.string().required("Required") : Yup.string(),
+          price: !update
+            ? Yup.number().required("Required").moreThan(0)
+            : Yup.number(),
+          category: !update
+            ? Yup.string().required("Must select a category")
+            : Yup.string(),
+          uom: !update
+            ? Yup.object({ name: Yup.string().required("Must select a UOM") })
+            : Yup.object({ name: Yup.string() }),
+          code: !update ? Yup.string().required("Required") : Yup.string(),
         })}
         onSubmit={(values) => {
+          const filteredObject = Object.fromEntries(
+            Object.entries(values).filter(([_, value]) => {
+              if (typeof value === "string") {
+                return value !== "";
+              } else {
+                return value !== 0;
+              }
+            })
+          );
           const uom = uoms.UOMs.find((uom) => uom.name == values.uom.name);
 
           if (update) {
-            dispatch(updateProduct({ id, ...values, uom:uom }));
+            dispatch(updateProduct({ id, ...filteredObject, uom: uom }));
             dispatch(startUpdating(id));
           } else {
-            if(uom)dispatch(addProduct({ ...values, uom: uom }));
+            if (uom) dispatch(addProduct({ ...values, uom: uom }));
             dispatch(startAdding());
           }
         }}
@@ -82,6 +102,7 @@ export default function AddProductForm({ update, id }: PropsType) {
           </div>
           <div className="flex flex-col mx-2">
             <TextInput type="text" label="Product name" name="name" id="name" />
+            <TextInput type="text" label="Product code" name="code" id="code" />
             <TextInput
               type="number"
               label="Product price"

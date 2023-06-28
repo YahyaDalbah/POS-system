@@ -45,6 +45,7 @@ export default function UOMtype({
         dispatch(deleteType({ type, id: i,base }));
         dispatch(deleteUOMsByType(type));
         dispatch(deleteProductsByType(type));
+        if(types.updating.updating)dispatch(startUpdatingTypes({ id: i, type }));
       }
     });
   }

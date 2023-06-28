@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   ProductType,
   deleteProduct,
@@ -25,6 +25,7 @@ export default function Product({
   const products = useAppSelector(selectProducts);
   const categories = useAppSelector(selectCategories);
   const carts = useAppSelector(selectCarts)
+  const [base, setBase] = useState(false)
 
   const cartToAdd = carts.carts.find(cart => cart.id == carts.showingCart.id)
 
@@ -33,6 +34,7 @@ export default function Product({
 
   function handleDelete() {
     dispatch(deleteProduct(id));
+    if(products.updating.updating)dispatch(startUpdating(id))
   }
   function handleUpdate() {
     if (!products.adding && !categories.adding && !categories.updating.updating)
@@ -44,8 +46,8 @@ export default function Product({
       cartId: cartToAdd?.id,
       ProductId: id,
       name,
-      uom: uom.name,
-      price
+      uom: base ? uom.base : uom.name,
+      price: base ? price * uom.convFactor : price
     }))
     else{
       setTimeout(() => {
@@ -55,21 +57,29 @@ export default function Product({
     }
   }
   function handleReduceProductFromCart() {
-    if (carts.showingCart.showing && id && cartToAdd?.id)
-      dispatch(
-        reduceProductFromCart({
-          cartId: cartToAdd?.id,
-          ProductId: id,
-          name,
-          uom: uom.name,
-          price,
-        })
-      );
-    else {
-      setTimeout(() => {
-        setBadAdding(false)
-      },5000)
-      setBadAdding(true)
+    let foundProduct = false
+    cartToAdd?.cartProducts.forEach(product => {
+      if(product.id == id){
+        foundProduct = true
+      }
+    })
+    if(foundProduct){
+      if (carts.showingCart.showing && id && cartToAdd?.id)
+        dispatch(
+          reduceProductFromCart({
+            cartId: cartToAdd?.id,
+            ProductId: id,
+            name,
+            uom: uom.name,
+            price,
+          })
+        );
+      else {
+        setTimeout(() => {
+          setBadAdding(false);
+        }, 5000);
+        setBadAdding(true);
+      }
     }
   }
   return (
@@ -79,8 +89,13 @@ export default function Product({
       </div>
       <div className="flex flex-col justify-evenly text-gray-600 pt-5 gap-y-2 items-center text-left">
         <h1 className="text-2xl font-semibold text-lightBlack">{name}</h1>
-        <p>
-          {price}$ per {uom.name}
+        <p className="flex items-center gap-x-2 mt-2">
+          {!base
+            ? `${price}$ per ${uom.name}`
+            : `${Number((price * uom.convFactor).toFixed(2))}$ per ${uom.base}`}
+          {uom.convFactor != 1 && <button className="text-sm rounded-md border-2 border-gray-700 px-1 w-20" onClick={() => setBase((prev) => !prev)}>{`change to ${
+            !base ? "base" : "secondry"
+          } unit`}</button>}
         </p>
         <p>{category}</p>
       </div>
@@ -110,7 +125,11 @@ export default function Product({
               +
             </button>
           </div>
-          {badAdding && <p className="text-center text-red-600 font-bold">Must select cart</p>}
+          {badAdding && (
+            <p className="text-center text-red-600 font-bold">
+              Must select cart
+            </p>
+          )}
         </div>
       )}
     </div>

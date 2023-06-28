@@ -13,9 +13,9 @@ export default function UOMs() {
   function handleClick() {
     if (!types.adding && !uoms.updating.updating && !types.updating.updating) dispatch(startAdding());
   }
-  const displayedUOMs = uoms.UOMs.map((uom) => {
+  const displayedUOMs = uoms.UOMs.length > 0 ? uoms.UOMs.filter(uom => uoms.currType && uoms.currType != "All" ? uom.type == uoms.currType : true).map((uom) => {
     return <UOM {...uom} />;
-  });
+  }) : "no UOMs"
   return (
     <div className=" mt-12">
       <div className="pl-10 mb-5 flex gap-x-10">

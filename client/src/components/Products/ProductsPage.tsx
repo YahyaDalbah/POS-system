@@ -1,8 +1,7 @@
-import React, { useState } from "react";
 import Categories from "../Categories/Categories";
 import Products from "./Products";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { selectProducts, startAdding } from "./productsSlice";
+import { useAppSelector } from "../../store/hooks";
+import { selectProducts } from "./productsSlice";
 import { selectCategories } from "../Categories/categoriesSlice";
 import AddCategoryForm from "../Categories/AddCategoryForm";
 import AddProductForm from "./AddProductForm";
@@ -10,7 +9,6 @@ import AddProductForm from "./AddProductForm";
 export default function ProductsPage() {
   const products = useAppSelector(selectProducts);
   const categories = useAppSelector(selectCategories);
-  const dispatch = useAppDispatch();
   //col-span-3
   return (
     <div className="main-page">

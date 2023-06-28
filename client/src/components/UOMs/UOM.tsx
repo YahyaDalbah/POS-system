@@ -10,7 +10,8 @@ export default function UOMCard({ id, name, type, base, convFactor }: UOM) {
   const dispatch = useAppDispatch()
 
   function handleDelete(){
-    dispatch(deleteUOM(id))
+    dispatch(deleteUOM({id, name, base}))
+    if(uoms.updating.updating)dispatch(startUpdating(id))
   }
   function handleUpdate(){
     if(!uoms.adding && !types.adding && !types.updating.updating)dispatch(startUpdating(id))
@@ -23,7 +24,7 @@ export default function UOMCard({ id, name, type, base, convFactor }: UOM) {
       <div className="text-gray-700">
         <p>base unit: {base}</p>
         <p>type: {type}</p>
-        <p>conversion factor: {convFactor}</p>
+        <p>conversion factor: {Number(convFactor.toFixed(3))}</p>
       </div>
       {convFactor != 1 && (
         <div className="flex justify-evenly mt-5">
