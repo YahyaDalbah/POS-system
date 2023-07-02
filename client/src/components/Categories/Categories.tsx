@@ -40,10 +40,11 @@ export default function Categories({pos}: PropsPOSType) {
         {displayedCategories}
         {!pos && (
           <button
+            data-testid="addCategoryBtn"
             onClick={handleClick}
             className="flex justify-center items-center text-gray-900 bg-white border border-gray-800 focus:outline-none hover:bg-gray-100 focus:ring-1 focus:ring-gray-200 font-medium rounded-full text-md px-5 py-1 mr-2 mb-2"
           >
-            <span>Add </span> <span className="text-xl"> +</span>
+            <span>Add</span><span className="text-xl">+</span>
           </button>
         )}
       </div>

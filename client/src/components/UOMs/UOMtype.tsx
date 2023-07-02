@@ -57,6 +57,7 @@ export default function UOMtype({
   return (
     <div>
       <button
+        data-testid="type"
         className={`${
           activeLink === i
             ? "bg-gray-900 text-white"

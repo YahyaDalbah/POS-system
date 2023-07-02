@@ -31,7 +31,12 @@ export default function UOMsPage() {
     <div className="main-page">
       <div
         className={`bg-gray-200 col-span-${
-          uoms.adding || types.adding || uoms.updating.updating || types.updating.updating ? 3 : 4
+          uoms.adding ||
+          types.adding ||
+          uoms.updating.updating ||
+          types.updating.updating
+            ? 3
+            : 4
         } text-gray-900 `}
       >
         <div className="font-medium flex p-10 pr-32 bg-white items-center">
@@ -52,6 +57,7 @@ export default function UOMsPage() {
             }
             {displayedUOMsTypes}
             <button
+              data-testid="addTypeBtn"
               onClick={handleClick}
               className="flex justify-center items-center text-gray-900 bg-white border border-gray-800 focus:outline-none hover:bg-gray-100 focus:ring-1 focus:ring-gray-200 font-medium rounded-full text-md px-5 py-1 mr-2 mb-2"
             >

@@ -40,7 +40,7 @@ export default function Products({pos}: PropsPOSType) {
       <div className="pl-10 mb-5 flex gap-x-10">
         <h1 className="text-xl pt-1">Products</h1>
         {!pos && <button onClick={handleClick} className="add-button">
-          Add a product
+          Add product
         </button>}
         <input className="rounded-md outline-none pl-2 py-0" placeholder="search a product" type="search" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
       </div>

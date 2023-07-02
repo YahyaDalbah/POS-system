@@ -13,7 +13,7 @@ export default function CartProduct({id,name,price,uom,qty}: CartProductType) {
     if(id && cart.id)dispatch(deleteCartProduct({cartId: cart.id, ProductId: id}))
   }
   return (
-    <div className="flex justify-between rounded-lg bg-lightGray px-2 py-3 mb-3">
+    <div data-testid="cartProduct" className="flex justify-between rounded-lg bg-lightGray px-2 py-3 mb-3">
       <div className='flex items-center'>
         <button
           className="-ml-1 mr-3 h-6 bg-gray-600 hover:bg-red-600 px-1.5 text-white rounded-full"
@@ -28,7 +28,7 @@ export default function CartProduct({id,name,price,uom,qty}: CartProductType) {
           </span>
         </p>
       </div>
-      <p>${price * qty}</p>
+      <p data-testid="cartProductPrice">${price * qty}</p>
     </div>
   );
 }

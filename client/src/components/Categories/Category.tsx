@@ -67,6 +67,7 @@ export default function Category({
   return (
     <div>
       <button
+        data-testid="category"
         className={`${
           activeLink === i
             ? "bg-gray-900 text-white"

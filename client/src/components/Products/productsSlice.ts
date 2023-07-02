@@ -206,7 +206,7 @@ const productsSlice = createSlice({
     builder.addCase(fetchProducts.rejected, (state, action) => {
       state.loading = false;
       state.products = [];
-      state.error = action.error.message;
+      state.error = action.error.stack;
     });
     builder.addCase(addProduct.pending, (state) => {
       state.loading = true;

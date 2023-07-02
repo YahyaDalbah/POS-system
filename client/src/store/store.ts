@@ -13,9 +13,11 @@ const store = configureStore({
     types: TypesReducer,
     carts: CartsReducer,
   },
+  
 });
 
 export default store
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+export type AppStore = ReturnType<typeof configureStore>;

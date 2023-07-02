@@ -83,19 +83,27 @@ export default function Product({
     }
   }
   return (
-    <div className="flex flex-col text-black">
+    <div className="flex flex-col text-black" data-testid="product">
       <div className="flex justify-center">
         <img src={image} alt="image" className=" w-36 h-36" />
       </div>
       <div className="flex flex-col justify-evenly text-gray-600 pt-5 gap-y-2 items-center text-left">
-        <h1 className="text-2xl font-semibold text-lightBlack">{name}</h1>
+        <h1
+          data-testid="productName"
+          className="text-2xl font-semibold text-lightBlack"
+        >
+          {name}
+        </h1>
         <p className="flex items-center gap-x-2 mt-2">
           {!base
             ? `${price}$ per ${uom.name}`
             : `${Number((price * uom.convFactor).toFixed(2))}$ per ${uom.base}`}
-          {uom.convFactor != 1 && <button className="text-sm rounded-md border-2 border-gray-700 px-1 w-20" onClick={() => setBase((prev) => !prev)}>{`change to ${
-            !base ? "base" : "secondry"
-          } unit`}</button>}
+          {uom.convFactor != 1 && (
+            <button
+              className="text-sm rounded-md border-2 border-gray-700 px-1 w-20"
+              onClick={() => setBase((prev) => !prev)}
+            >{`change to ${!base ? "base" : "secondry"} unit`}</button>
+          )}
         </p>
         <p>{category}</p>
       </div>
@@ -113,12 +121,14 @@ export default function Product({
         <div className="flex flex-col mt-3">
           <div className="flex justify-evenly">
             <button
+              data-testid="reduceProductFromCartBtn"
               onClick={handleReduceProductFromCart}
               className="add-to-cart-button text-xl"
             >
               -
             </button>
             <button
+              data-testid="addProductToCartBtn"
               onClick={handleAddProductToCart}
               className="add-to-cart-button text-xl"
             >

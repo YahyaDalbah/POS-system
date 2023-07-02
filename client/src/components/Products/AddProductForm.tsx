@@ -23,13 +23,21 @@ export default function AddProductForm({ update, id }: PropsType) {
   const uoms = useAppSelector(selectUOMs);
 
   const categoriesOptions = categories.categories.map((category) => {
-    return <option value={category.category}>{category.category}</option>;
+    return <option data-testid="category-option" value={category.category}>{category.category}</option>;
   });
   const UOMsOptions = uoms.UOMs.map((uom) => {
     if (uom.convFactor == 1) {
-      return <option value={uom.base}>{uom.base}</option>;
+      return (
+        <option data-testid="uom-option" value={uom.base}>
+          {uom.base}
+        </option>
+      );
     } else {
-      return <option value={uom.name}>{uom.name}</option>;
+      return (
+        <option data-testid="uom-option" value={uom.name}>
+          {uom.name}
+        </option>
+      );
     }
   });
   return (
@@ -74,7 +82,8 @@ export default function AddProductForm({ update, id }: PropsType) {
           const uom = uoms.UOMs.find((uom) => uom.name == values.uom.name);
 
           if (update) {
-            dispatch(updateProduct({ id, ...filteredObject, uom: uom }));
+            if(uom)dispatch(updateProduct({ id, ...filteredObject, uom: uom }));
+            else dispatch(updateProduct({ id, ...filteredObject }));
             dispatch(startUpdating(id));
           } else {
             if (uom) dispatch(addProduct({ ...values, uom: uom }));
@@ -120,6 +129,7 @@ export default function AddProductForm({ update, id }: PropsType) {
             </SelectInput>
           </div>
           <button
+            data-testid="submitAddProductForm"
             type="submit"
             className="self-center mt-16 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
           >

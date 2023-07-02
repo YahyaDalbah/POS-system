@@ -36,14 +36,16 @@ export default function AddUOMForm({ update, id }: PropsType) {
                   return isNaN(Number(value));
                 })
             : Yup.string(),
-          convFactor: !update ? Yup.number()
-            .required("Required")
-            .moreThan(0)
-            .test(
-              "notEqual",
-              "Number must not be equal to 1",
-              (value) => value !== 1
-            ) : Yup.number()
+          convFactor: !update
+            ? Yup.number()
+                .required("Required")
+                .moreThan(0)
+                .test(
+                  "notEqual",
+                  "Number must not be equal to 1",
+                  (value) => value !== 1
+                )
+            : Yup.number(),
         })}
         onSubmit={(values) => {
           if (update) {
@@ -114,6 +116,7 @@ export default function AddUOMForm({ update, id }: PropsType) {
               />
             </div>
             <button
+              data-testid="submitAddUOMForm"
               type="submit"
               className="self-center mt-16 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
             >
