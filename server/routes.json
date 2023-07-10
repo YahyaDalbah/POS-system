@@ -1,3 +1,0 @@
-{
-  "/carts/:id/cartProducts": "/carts/:id/cartProducts?cartId=:id"
-}

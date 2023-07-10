@@ -18,7 +18,7 @@ export default function TextInput({ label,type, ...props }: PropsType) {
       <label htmlFor={props.name}>{label}</label>
       <input
         type={type}
-        className="outline-none border-2 pl-1 bg-medBlack"
+        className="outline-none border-2 pl-1 bg-medBlack disabled:cursor-not-allowed"
         {...props}
         {...field}
       />
