@@ -1,6 +1,7 @@
 # POS system
 
 the final project for FTS internship, it’s a web application for supermarkets to manage products and carts, including the ability to handle multiple carts and calculate the total amount for each order. 
+P.S: The project lacks proper design and is not responsive, as it was meant to be a coding project only
 
 ## prerequisites
 
